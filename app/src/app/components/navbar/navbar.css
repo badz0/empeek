@@ -1,0 +1,29 @@
+navbar {
+  background: #2b2f3e;
+  width: 20%;
+}
+
+.navbar .navbar-title {
+  margin: 1.4rem 0 0 1rem;
+  font-size: 2rem;
+  color: #565a69;
+  font-family: "OpenSansLight", sans-serif;
+}
+
+.navbar .navbar-item {
+  background: linear-gradient(to bottom, #ff2d5c, #ff404b);
+  height: 3rem;
+  margin-top: 4rem;
+}
+
+.navbar .navbar-item a {
+  line-height: 3rem;
+  margin-left: 1.3rem;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.navbar .navbar-item a:hover {
+  color: #565a69;
+}

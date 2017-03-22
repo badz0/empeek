@@ -1,0 +1,11 @@
+@font-face {
+  font-family: "AlberLight";
+  src: url("./ufonts.com_alber-light.eot");
+  src: url("./ufonts.com_alber-light.eot") format("embedded-opentype"),
+       url("./ufonts.com_alber-light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "OpenSansLight";
+  src: url("./open-sans-light.ttf") format("truetype");
+}

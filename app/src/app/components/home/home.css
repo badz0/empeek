@@ -1,0 +1,9 @@
+home {
+  display: block;
+}
+
+.home {
+  display: flex;
+  justify-content: space-between;
+  margin: 3% 2.4% 1%
+}
