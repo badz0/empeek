@@ -4,7 +4,10 @@ import './comment.css';
 
 let commentComponent = {
   template,
-  controller
+  controller,
+  bindings: {
+    comment: '<'
+  }
 };
 
 export default commentComponent;

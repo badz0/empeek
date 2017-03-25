@@ -1,5 +1,11 @@
 class ItemsController {
-  constructor() {
+  constructor(ItemsListService) {
+    'ngInject';
+    this.itemsService = ItemsListService;
+  }
+  onSave(itemName) {
+    if (!itemName) return;
+    this.itemsService.add(itemName);
   }
 }
 

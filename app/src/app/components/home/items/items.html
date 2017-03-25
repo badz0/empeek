@@ -1,13 +1,11 @@
 <div class="items">
   <h1>Items</h1>
-  <form class="items-form">
-    <input name="item-name" class="items-input" type="text" placeholder="Type name here...">
-    <input class="items-submit" type="submit" value="Add new">
-  </form>
+  <item-input on-save="$ctrl.onSave(itemName)"></item-input>
   <div class="items-list">
-    <item class="active"></item>
-    <item></item>
-    <item></item>
-    <item></item>
+    <item ng-class="{ active: item.active }"
+          item="item"
+          num-of-comments="item.comments.length"
+          ng-repeat="item in $ctrl.itemsService.list track by $index">
+    </item>
   </div>
 </div>

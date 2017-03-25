@@ -4,7 +4,11 @@ import './item.css';
 
 let itemComponent = {
   template,
-  controller
+  controller,
+  bindings: {
+    item: '<',
+    numOfComments: '<'
+  }
 };
 
 export default itemComponent;

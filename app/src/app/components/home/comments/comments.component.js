@@ -4,7 +4,10 @@ import './comments.css';
 
 let commentsComponent = {
   template,
-  controller
+  controller,
+  bindings: {
+    activeIndex: '<'
+  }
 };
 
 export default commentsComponent;

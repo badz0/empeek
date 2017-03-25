@@ -1,6 +1,9 @@
 navbar {
   background: #2b2f3e;
   width: 20%;
+  min-width: 153.6px;
+  height: 100%;
+  position: fixed;
 }
 
 .navbar .navbar-title {

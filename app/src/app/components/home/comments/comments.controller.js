@@ -1,5 +1,11 @@
 class CommentsController {
-  constructor() {
+  constructor(ItemsListService) {
+    'ngInject';
+    this.itemsService = ItemsListService;
+  }
+  addComment(comment) {
+    if (!comment) return;
+    this.itemsService.addComment(comment);
   }
 }
 

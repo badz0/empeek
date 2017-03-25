@@ -1,5 +1,7 @@
 class HomeController {
-  constructor() {
+  constructor(ItemsListService) {
+    'ngInject';
+    this.itemsService = ItemsListService;
   }
 }
 

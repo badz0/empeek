@@ -13,5 +13,4 @@ angular.module('app', [
     "ngInject";
     $locationProvider.html5Mode(true).hashPrefix('!');
   })
-
   .component('app', AppComponent);

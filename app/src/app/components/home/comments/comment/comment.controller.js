@@ -1,6 +1,6 @@
 class CommentController {
-  constructor() {
-
+  $onInit() {
+    this.commentText = this.comment;
   }
 }
 

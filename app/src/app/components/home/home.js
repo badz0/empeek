@@ -3,6 +3,7 @@ import uiRouter from 'angular-ui-router';
 import homeComponent from './home.component';
 import Items from './items/items';
 import Comments from './comments/comments';
+import ItemsListService from'./itemsList.service';
 
 let homeModule = angular.module('home', [
   uiRouter,
@@ -22,6 +23,7 @@ let homeModule = angular.module('home', [
     });
 })
 .component('home', homeComponent)
+.service('ItemsListService', ItemsListService)
 
 .name;
 

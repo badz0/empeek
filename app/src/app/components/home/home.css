@@ -5,5 +5,5 @@ home {
 .home {
   display: flex;
   justify-content: space-between;
-  margin: 3% 2.4% 1%
+  padding: 2.8% 2.4% 1%
 }

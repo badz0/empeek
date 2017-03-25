@@ -4,8 +4,6 @@ comment {
 
 .comment {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   padding: .9rem 0;
   border-top: 2px solid #f2f2f2;
 }
@@ -14,7 +12,7 @@ comment {
   border: none;
 }
 
-.orange .comment .user-img {
+.comment .user-img {
   background-color: #ff8a00;
 }
 
@@ -26,10 +24,10 @@ comment {
   width: 2.7rem;
   height: 2.7rem;
   margin-right: .5rem;
-  flex: 1 0 auto;
+  flex: 0 0 auto;
 }
 
 .comment .comment-text {
-  flex: 0 1 auto;
   margin: 0;
+  white-space: pre-wrap;
 }

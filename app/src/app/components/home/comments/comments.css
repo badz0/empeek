@@ -29,33 +29,3 @@ comments {
   flex: 1 auto;
   margin: 0 1rem .5rem .7rem;
 }
-
-.comments .comments-input {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: .5rem 1rem .5rem .7rem
-}
-
-.comments .comments-input .user-img {
-  width: 2.7rem;
-  height: 2.7rem;
-  background-color: #e6e6e6;
-}
-
-.comments .comments-input form {
-  flex: 1 auto;
-  height: 4rem;
-  margin-left: .5rem;
-}
-
-.comments .comments-input form textarea {
-  height: 85%;
-  width: 97%;
-  resize: none;
-  outline:none;
-  border: 1px solid #ccc;
-}
-.comments .comments-input form textarea:focus {
-   border-color:#27ccc0;
-}
