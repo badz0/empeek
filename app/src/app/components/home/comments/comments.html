@@ -7,5 +7,5 @@
       ng-repeat="comment in $ctrl.itemsService.list[$ctrl.activeIndex-1].comments track by $index">
     </comment>
     </div>
-    <comment-input add="$ctrl.addComment(comment)"></comment-input>
+    <comment-input add="$ctrl.addComment(comment)" ng-if="$ctrl.activeIndex"></comment-input>
 </div>
