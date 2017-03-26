@@ -28,9 +28,15 @@ export default class ItemsList {
       item.active = false;
     });
   }
-  delete(id){
-    this.list = this.list.filter((item) => id !== item.id);
-    this.activeIndex = '';
+  delete(id) {
+    this.list = this.list.filter((item, i) => {
+      if (id === item.id) {
+        if (i < this.activeIndex) this.activeIndex--;
+        if (item.active) this.activeIndex = '';
+        return false;
+      }
+      return true;
+    });
     this.updateStorage();
   }
   addComment(comment) {
