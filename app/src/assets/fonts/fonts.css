@@ -1,11 +1,19 @@
 @font-face {
-  font-family: "AlberLight";
-  src: url("./ufonts.com_alber-light.eot");
-  src: url("./ufonts.com_alber-light.eot") format("embedded-opentype"),
-       url("./ufonts.com_alber-light.ttf") format("truetype");
+  font-family: "OpenSansLight";
+  src: url("./OpenSans-Light.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: "OpenSansLight";
-  src: url("./open-sans-light.ttf") format("truetype");
+  font-family: "OpenSansRegular";
+  src: url("./OpenSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "OpenSansSemibold";
+  src: url("./OpenSans-Semibold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "OpenSansBold";
+  src: url("./OpenSans-Bold.ttf") format("truetype");
 }

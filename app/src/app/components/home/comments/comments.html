@@ -1,11 +1,11 @@
 <div class="comments">
   <h1>Comments #<span ng-bind="$ctrl.activeIndex"></span></h1>
     <div class="comments-list">
-    <comment 
-      ng-class="{ purple: $odd }"
-      comment="comment"
-      ng-repeat="comment in $ctrl.itemsService.list[$ctrl.activeIndex-1].comments track by $index">
-    </comment>
+      <comment 
+        ng-class="{ purple: $odd, first: $index === 0 }"
+        comment="comment"
+        ng-repeat="comment in $ctrl.itemsService.list[$ctrl.activeIndex-1].comments track by $index">
+      </comment>
     </div>
     <comment-input add="$ctrl.addComment(comment)" ng-if="$ctrl.activeIndex"></comment-input>
 </div>

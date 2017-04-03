@@ -1,5 +1,6 @@
 items {
-  flex-basis: 54%;
+  flex-basis: 55%;
+  margin-right: 18px;
   box-shadow: 0 0 3px 1px #c8c8c8;
   background-color: #fff;
   align-self: flex-start;
@@ -11,11 +12,10 @@ items {
 }
 
 .items h1 {
-  font-size: 2rem;
+  font-size: 2.25rem;
   color: #565a69;
-  font-family: "OpenSansLight", sans-serif;
   margin: 0;
-  padding: 0.5rem 0 .8rem 1.2rem;
+  padding: 21px 0 26px 28px;
 }
 
 .items .items-list {

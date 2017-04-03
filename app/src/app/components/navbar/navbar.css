@@ -1,30 +1,29 @@
 navbar {
   background: #2b2f3e;
-  width: 20%;
-  min-width: 153.6px;
+  width: 271px;
   height: 100%;
   position: fixed;
 }
 
 .navbar .navbar-title {
-  margin: 1.4rem 0 0 1rem;
-  font-size: 2rem;
+  margin: 30px 0 0 27px;
+  font-size: 2.25rem;
   color: #565a69;
-  font-family: "OpenSansLight", sans-serif;
 }
 
 .navbar .navbar-item {
   background: linear-gradient(to bottom, #ff2d5c, #ff404b);
-  height: 3rem;
-  margin-top: 4rem;
+  height: 57px;
+  margin-top: 77px;
 }
 
 .navbar .navbar-item a {
-  line-height: 3rem;
-  margin-left: 1.3rem;
+  line-height: 57px;
+  margin-left: 27px;
   text-decoration: none;
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 1.125rem;
+  font-family: "OpenSansRegular";
 }
 
 .navbar .navbar-item a:hover {
