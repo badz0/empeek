@@ -1,6 +1,6 @@
 item {
   display: block;
-  padding: 0 1rem 0 1.7rem;
+  padding: 0 19px 0 30px;
   
 }
 
@@ -16,8 +16,8 @@ item:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: .5rem 0;
   border-bottom: 2px solid #f2f2f2;
+  height: 54px;
 }
 
 .item div {
@@ -25,16 +25,22 @@ item:hover {
 }
 
 .item .item-name {
-  font-weight: bold;
+  font-family: "OpenSansSemibold";
+  color: #2B2F3E;
+  margin-right: 5px;
 }
 
 .item .num-of-comments {
-  font-weight: bold;
-  font-size: 0.7rem;  
-  border-radius: 10px;
+  display: inline-block;
+  height: 20.5px;
+  line-height: 20.5px;
+  font-size: 0.8125rem;  
+  padding: 0 9px;
+  border-radius: 10.25px;
   background-color: #27ccc0;
   color: white;
-  padding: .2rem .6rem;
+  text-align: center;
+  font-family: "OpenSansBold";
 }
 .item button {
   padding: 0.3rem 1rem;
@@ -43,6 +49,8 @@ item:hover {
   border: 1px solid #ff3159;
   border-radius: 3px;
   outline: none;
+  width: 97px;
+  height: 34px;
 }
 .item button:hover {
   background-color: #fdf2f4;

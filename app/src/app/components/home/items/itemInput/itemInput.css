@@ -2,17 +2,18 @@
   font-size: 0.9rem;
   display: flex;
   justify-content: space-between;
-  margin: 0 .8rem 0 1.6rem;
+  margin: 0 15px 0 31px;
 }
 
  .item-form .item-input {
   border: 1px solid #ccc;
   flex: 1 auto;
   margin-right: .5rem;
-  height: 1.6rem;
+  height: 37px;
   border-radius: 3px;
-  padding-left: 0.5rem;
-  outline:none;
+  padding-left: 9px;
+  outline: none;
+  font-family: "OpenSansRegular";
 }
 .item-form .item-input:focus {
   border-color:#27ccc0;
@@ -20,11 +21,13 @@
 
 .item-form .item-submit {
   padding: 0.37rem 1.4rem;
+  width: 132px;
   background-color: #27ccc0;
   color: white;
   border: 1px solid #27ccc0;
   border-radius: 3px;
   outline: none;
+  font-family: "OpenSansSemibold";
 }
 .item-form .item-submit:hover {
   background-color: #1fc0b4;

@@ -4,7 +4,7 @@ comment {
 
 .comment {
   display: flex;
-  padding: .9rem 0;
+  padding: 17px 0 22px;
   border-top: 2px solid #f2f2f2;
 }
 
@@ -21,13 +21,16 @@ comment {
 }
 
 .comment .user-img {
-  width: 2.7rem;
-  height: 2.7rem;
-  margin-right: .5rem;
+  width: 52px;
+  height: 52px;
+  margin-right: 15px;
   flex: 0 0 auto;
 }
 
 .comment .comment-text {
   margin: 0;
   white-space: pre-wrap;
+  font-family: "OpenSansRegular";
+  font-size: .75rem;
+  color: #666666;
 }

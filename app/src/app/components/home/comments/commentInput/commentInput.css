@@ -2,27 +2,31 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin: .5rem 1rem .5rem .7rem
+  margin: 0 24px 14px 19px;
 }
 
 .comment-input .user-img {
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 52px;
+  height: 52px;
   background-color: #e6e6e6;
+  margin-right: 15px;
 }
 
 .comment-input form {
   flex: 1 auto;
-  height: 4rem;
-  margin-left: .5rem;
+  height: 70px;
 }
 
 .comment-input form textarea {
-  height: 85%;
-  width: 97%;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
   resize: none;
-  outline:none;
+  outline: none;
   border: 1px solid #ccc;
+  font-family: "OpenSansRegular";
+  font-size: .75rem;
+  color: #666666;
 }
 .comment-input form textarea:focus {
    border-color:#27ccc0;
