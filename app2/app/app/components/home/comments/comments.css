@@ -1,0 +1,34 @@
+comments {
+  flex-basis: 45%;
+  box-shadow: 0 0 3px 1px #c8c8c8;
+  background-color: #fff;
+  align-self: flex-start;
+}
+
+.comments {
+  box-shadow: 0 0 2px 0px #adadad inset;
+  min-height: 400px;
+  font-size: .9rem;
+}
+
+.comments h1 {
+  font-size: 2.25rem;
+  color: #565a69;
+  margin: 0;
+  padding: 21px 0 26px 28px;
+  align-self: flex-start;
+}
+
+.comments {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.comments .comments-list {
+  flex: 1 auto;
+  margin: 0 19px 19px 19px;
+}
+
+.comments .comments-list:first-child {
+  border: none;
+}

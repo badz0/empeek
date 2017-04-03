@@ -2,7 +2,8 @@
     'use strict';
 
     angular.module('app.components', [
-        'app.navbar'
+        'app.navbar',
+        'app.home'
     ]);
 
 })();
