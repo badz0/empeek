@@ -1,0 +1,69 @@
+﻿@import './fonts/fonts.css';
+
+html, body {
+   height: 100%;
+   font-family: "OpenSansLight";
+   font-size: 16px;
+   margin: 0;
+}
+
+.app {
+  height: 100%;
+}
+
+.app .content {
+  width: calc(100% - 271px);
+  height: 100%;
+  margin-left: 271px;
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+body::-webkit-scrollbar-track {
+  background-color: #e6e6e6;
+  padding-right: 2px;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #b3b3b3;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #999999;
+}
+
+body::-webkit-scrollbar-thumb:active {
+  background-color: #878787;
+}
+
+navbar {
+  background: #2b2f3e;
+  width: 271px;
+  height: 100%;
+  position: fixed;
+}
+
+.navbar .navbar-title {
+  margin: 30px 0 0 27px;
+  font-size: 2.25rem;
+  color: #565a69;
+}
+
+.navbar .navbar-item {
+  background: linear-gradient(to bottom, #ff2d5c, #ff404b);
+  height: 57px;
+  margin-top: 77px;
+}
+
+.navbar .navbar-item a {
+  line-height: 57px;
+  margin-left: 27px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.125rem;
+  font-family: "OpenSansRegular";
+}
+
+.navbar .navbar-item a:hover {
+  color: #565a69;
+}
