@@ -1,13 +1,13 @@
-import template from './commentInput.html';
-import controller from './commentInput.controller';
-import './commentInput.css';
+(function() {
+  'use strict';
 
-let commentInputComponent = {
-  template,
-  controller,
-  bindings: {
-    add: '&'
-  }
-};
+  angular.module('home.comments')
+  .component('commentInput', {
+    templateUrl: 'app/components/home/comments/commentInput/commentInput.html',
+    controller: 'CommentInputController',
+    bindings: {
+      add: '&'
+    }
+  });
 
-export default commentInputComponent;
+})();

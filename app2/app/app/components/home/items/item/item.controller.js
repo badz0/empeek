@@ -7,12 +7,15 @@
   ItemController.$inject = ['ItemsListService'];
   function ItemController(ItemsListService) {
     this.itemsService = ItemsListService;
+    this.activateItem = activateItem;
+    this.deleteItem = deleteItem;
 
-    this.activateItem = function() {
+    function activateItem() {
       this.itemsService.activate(this.item.id);
     }
-    this.deleteItem = function() {
-      this.itemsService.delete(this.item.id);
+    
+    function deleteItem() {
+      this.itemsService.deleteItem(this.item.id);
     }
   }
 })();

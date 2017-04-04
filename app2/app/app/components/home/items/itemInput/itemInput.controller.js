@@ -5,10 +5,14 @@
   .controller('ItemInputController', ItemInputController);
 
   function ItemInputController() {
-    this.$onInit = function() {
+    this.$onInit = $onInit;
+    this.save = save;
+    
+    function $onInit() {
       this.itemName = '';
     }
-    this.save = function() {
+
+    function save() {
       this.onSave({
         itemName: this.itemName
       });

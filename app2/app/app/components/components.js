@@ -1,9 +1,9 @@
 (function() {
-    'use strict';
+  'use strict';
 
-    angular.module('app.components', [
-        'app.navbar',
-        'app.home'
-    ]);
+  angular.module('app.components', [
+      'app.navbar',
+      'app.home'
+  ]);
 
 })();

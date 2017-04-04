@@ -3,7 +3,7 @@
 
   angular.module('app.home', [
     'home.items',
-    // 'home.comments'
+    'home.comments'
   ]);
   
 })();

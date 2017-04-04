@@ -1,9 +1,9 @@
 (function() {
-    'use strict';
+  'use strict';
 
-    angular.module('app')
-    .component('app', {
-      templateUrl: 'app/app.html'
-    });
+  angular.module('app')
+  .component('app', {
+    templateUrl: 'app/app.html'
+  });
 
 })();

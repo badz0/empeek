@@ -12,12 +12,28 @@
     this.id = this.list.length ? this.list[this.list.length - 1].id : 1;
     this.activeIndex = '';
 
-    this.add = function (name) {
+    this.add = add;
+    this.activate = activate;
+    this.deleteItem = deleteItem;
+    this.addComment = addComment;
+
+    function deactivate() {
+      that.list.forEach( (item) => {
+        item.active = false;
+      });
+    };
+
+    function updateStorage() {
+      localStorage.setItem('itemsData', JSON.stringify(that.list));
+    };
+
+    function add(name) {
       this.id++;
       this.list.push(new Item(name, this.id));
-      this.updateStorage();
-    }
-    this.activate = function(id) {
+      updateStorage();
+    };
+
+    function activate(id) {
       var index;
       this.list.forEach( (item, i) => {
         item.active = false;
@@ -27,14 +43,10 @@
         }
       });
       this.activeIndex = index + 1;
-      this.updateStorage();
-    }
-    function deactivate() {
-      that.list.forEach( (item) => {
-        item.active = false;
-      });
-    }
-    this.delete = function(id) {
+      updateStorage();
+    };
+
+    function deleteItem(id) {
       this.list = this.list.filter((item, i) => {
         if (id === item.id) {
           if (i < this.activeIndex) this.activeIndex--;
@@ -43,22 +55,20 @@
         }
         return true;
       });
-      this.updateStorage();
-    }
-    this.addComment = function(comment) {
+      updateStorage();
+    };
+
+    function addComment(comment) {
       if (!this.activeIndex) return;
       this.list[this.activeIndex - 1].comments.push(comment);
-      this.updateStorage();
-    }
-    this.updateStorage = function() {
-      localStorage.setItem('itemsData', JSON.stringify(this.list));
-    }
-  }
+      updateStorage();
+    };
+  };
 
   function Item(name, id) {
     this.id = id;
     this.name = name;
     this.comments = [];
     this.active = false;
-  }
+  };
 })();

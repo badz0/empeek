@@ -1,7 +1,15 @@
-class CommentController {
-  $onInit() {
-    this.commentText = this.comment;
-  }
-}
+(function() {
+  'use strict';
 
-export default CommentController;
+  angular.module('home.comments')
+  .controller('CommentController', CommentController);
+
+  function CommentController() {
+    this.$onInit = $onInit;
+    
+    function $onInit() {
+      this.commentText = this.comment;
+    }
+  }
+})();
+

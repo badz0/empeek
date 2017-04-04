@@ -1,10 +1,10 @@
 (function() {
-    'use strict';
+  'use strict';
 
-    angular.module('home.items')
-    .component('items', {
-      templateUrl: 'app/components/home/items/items.html',
-      controller: 'ItemsController'
-    });
+  angular.module('home.items')
+  .component('items', {
+    templateUrl: 'app/components/home/items/items.html',
+    controller: 'ItemsController'
+  });
 
 })();

@@ -1,13 +1,13 @@
-import template from './comment.html';
-import controller from './comment.controller';
-import './comment.css';
+(function() {
+  'use strict';
 
-let commentComponent = {
-  template,
-  controller,
-  bindings: {
-    comment: '<'
-  }
-};
+  angular.module('home.comments')
+  .component('comment', {
+    templateUrl: 'app/components/home/comments/comment/comment.html',
+    controller: 'CommentController',
+    bindings: {
+      comment: '<'
+    }
+  });
 
-export default commentComponent;
+})();

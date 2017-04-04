@@ -1,10 +1,12 @@
 (function() {
-    'use strict';
+  'use strict';
 
-    angular.module('app.home')
-    .controller('HomeController', HomeController);
-    HomeController.$inject = ['ItemsListService'];
-    function HomeController(ItemsListService) {
-      this.itemsService = ItemsListService;
-    }
+  angular.module('app.home')
+  .controller('HomeController', HomeController);
+
+  HomeController.$inject = ['ItemsListService'];
+  
+  function HomeController(ItemsListService) {
+    this.itemsService = ItemsListService;
+  }
 })();

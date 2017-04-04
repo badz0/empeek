@@ -11,6 +11,12 @@ html, body {
   height: 100%;
 }
 
+.app .content {
+  width: calc(100% - 271px);
+  height: 100%;
+  margin-left: 271px;
+}
+
 body::-webkit-scrollbar {
   width: 10px;
 }
@@ -64,9 +70,7 @@ navbar {
 
 home {
   display: block;
-  width: calc(100% - 271px);
   height: 100%;
-  margin-left: 271px;
   background-color: #f9f9f9;
 }
 
@@ -102,13 +106,13 @@ items {
 }
 
 .item-form {
-  font-size: 0.9rem;
   display: flex;
   justify-content: space-between;
   margin: 0 15px 0 31px;
 }
 
  .item-form .item-input {
+  font-size: 1rem;
   border: 1px solid #ccc;
   flex: 1 auto;
   margin-right: .5rem;
@@ -123,6 +127,7 @@ items {
 }
 
 .item-form .item-submit {
+  font-size: 1rem;
   padding: 0.37rem 1.4rem;
   width: 132px;
   background-color: #27ccc0;
@@ -185,6 +190,7 @@ item:hover {
   font-family: "OpenSansBold";
 }
 .item button {
+  font-size: 1rem;
   padding: 0.3rem 1rem;
   background-color: #fff;
   color: #ff3159;
@@ -200,4 +206,110 @@ item:hover {
 .item button:active {
   position:relative;
   top:1px;
+}
+
+comments {
+  flex-basis: 45%;
+  box-shadow: 0 0 3px 1px #c8c8c8;
+  background-color: #fff;
+  align-self: flex-start;
+}
+
+.comments {
+  box-shadow: 0 0 2px 0px #adadad inset;
+  min-height: 400px;
+  font-size: .9rem;
+}
+
+.comments h1 {
+  font-size: 2.25rem;
+  color: #565a69;
+  margin: 0;
+  padding: 21px 0 26px 28px;
+  align-self: flex-start;
+}
+
+.comments {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.comments .comments-list {
+  flex: 1 auto;
+  margin: 0 19px 19px 19px;
+}
+
+.comments .comments-list:first-child {
+  border: none;
+}
+
+.comment-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0 24px 14px 19px;
+}
+
+.comment-input .user-img {
+  width: 52px;
+  height: 52px;
+  background-color: #e6e6e6;
+  margin-right: 15px;
+}
+
+.comment-input form {
+  flex: 1 auto;
+  height: 70px;
+}
+
+.comment-input form textarea {
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  resize: none;
+  outline: none;
+  border: 1px solid #ccc;
+  font-family: "OpenSansRegular";
+  font-size: .75rem;
+  color: #666666;
+}
+.comment-input form textarea:focus {
+   border-color:#27ccc0;
+}
+
+comment {
+  display: block;
+}
+
+.comment {
+  display: flex;
+  padding: 17px 0 22px;
+  border-top: 2px solid #f2f2f2;
+}
+
+.first .comment {
+  border: none;
+}
+
+.comment .user-img {
+  background-color: #ff8a00;
+}
+
+.purple .comment .user-img {
+  background-color: #47568c;
+}
+
+.comment .user-img {
+  width: 52px;
+  height: 52px;
+  margin-right: 15px;
+  flex: 0 0 auto;
+}
+
+.comment .comment-text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: "OpenSansRegular";
+  font-size: .75rem;
+  color: #666666;
 }
