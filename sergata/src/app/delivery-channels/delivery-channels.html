@@ -1,0 +1,583 @@
+<div class="portlet light profile-sidebar-portlet bordered">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tableheader">
+                <span class="title hidden-xs" translate>DELIVERY_CHANNELS</span>
+                <span class="title visible-xs-inline" translate>DELIVERIES</span>
+                <div class="pull-right">
+                    <span style="margin-right: 8px;">
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="button" class="btn btn-default"
+                                    ng-click="vm.showActiveView('thumbs')"
+                                    ng-class="{'btn-default': vm.activeView === 'table'}">
+                                <i class="fa fa-th-large"></i></button>
+                            <button type="button" class="btn"
+                                    ng-click="vm.showActiveView('table')"
+                                    ng-class="{'btn-default': vm.activeView === 'thumbs'}">
+                                <i class="fa fa-table"></i></button>
+                        </div>
+                    </span>
+                    <button class="btn btn-primary"
+                            ng-click="vm.openModalAdd();">
+                        <i class="fa fa-plus"></i>
+                        <span class="hidden-xs">{{'BTN_ADD'|translate}} {{'DELIVERY_CHANNEL'|translate}}</span>
+                    </button>
+                    <button class="btn"
+                            style="margin-left: 8px"
+                            ng-click="vm.updateRecords();">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+                <div class="search-query">
+                    <div class="input-group">
+                        <input type="text"
+                               class="form-control"
+                               ng-model="vm.searchText"
+                               translate
+                               translate-attr-placeholder="SEARCH"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" 
+                                    type="button">
+                                <span class=" glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-init="vm.showActiveView('table')">
+            <div class="col-md-12" ng-show="vm.activeView==='table'">
+                <div class="table-scrollable clearfix" id="channeltable">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th> #</th>
+                            <th translate> STATUS</th>
+                            <th translate> NAME</th>
+                            <th> {{'OUTPUT'|translate}} {{'CLUSTER'|translate}}</th>
+                            <th translate> SOURCES</th>
+                            <th translate> VIEWERS</th>
+                            <th translate> OUTPUTS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="channel in vm.channels | multifilter: vm.searchText:['name', 'broadcasterCluster.name', 'primerySource.name', 'altSource.name'] as filteredChannels"
+                            ng-click="vm.setSelectedChannel(channel)"
+                            ng-class="{'select-row': vm.selectedChannel.name === channel.name}">
+                            <td> {{$index+1}}</td>
+                            <td><i class="fa fa-circle"
+                                   zx-icon-status-class="channel.generalStatus"
+                                   is-enabled="channel.is_enabled">
+                            </i>
+                                {{((channel.is_enabled)?vm.statuses[channel.generalStatus]:"DISABLED")|translate}}
+                            </td>
+                            <td>{{channel.name}}</td>
+                            <td>{{channel.broadcasterCluster.name}}</td>
+                            <td>{{channel.primerySource.name}}
+                                {{(!channel.alt_source_id)?"":", " + channel.altSource.name}}
+                            </td>
+                            <td>{{channel.viewers?(channel.viewers|number:0):"-"}}</td>
+                            <td ng-if="channel.good_outputs||channel.bad_outputs||channel.disabled_outputs">
+                                <i class="fa fa-circle"
+                                   zx-icon-status-class="'green'"
+                                   ng-if="channel.good_outputs">
+                                </i>
+                                <span ng-if="channel.good_outputs">{{channel.good_outputs}}</span>
+                                <i class="fa fa-circle"
+                                   zx-icon-status-class="'red'"
+                                   ng-if="channel.bad_outputs">
+                                </i>
+                                <span ng-if="channel.bad_outputs">{{channel.bad_outputs}}</span>
+                                <i class="fa fa-circle"
+                                   zx-icon-status-class="'gray'"
+                                   ng-if="channel.disabled_outputs">
+                                </i>
+                                <span ng-if="channel.disabled_outputs"> {{channel.disabled_outputs}}</span>
+                            </td>
+                            <td ng-if="!channel.good_outputs&&!channel.bad_outputs&&!channel.disabled_outputs">-</td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" class="text-center" ng-show="vm.channels.length && !filteredChannels.length">
+                                {{'NO_RESULTS_FOUND'|translate}}...
+                            </td>
+                            <td colspan="7" class="text-center" ng-show="!vm.channels.length && !filteredChannels.length">
+                                {{'NO_CHANNELS'|translate}}...
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div ng-show="vm.activeView==='thumbs'">
+                <div class="col-md-12">
+                    <!--Start Streams-->
+                    <div class="streamarea">
+                        <div class="streambox trans_details"
+                             ng-repeat="channel in vm.channels | multifilter: vm.searchText:['name', 'broadcasterCluster.name', 'primerySource.name', 'altSource.name'] as filteredChannels"
+                             ng-click="vm.setSelectedChannel(channel)"
+                             ng-class="{'select-row': channel.name === vm.selectedChannel.name,'streamerror':channel.status==='bad'}">
+                            <div class='imgbox'
+                                 ng-class="{'error': channel.generalStatus == 'bad'}">
+                                <zx-stream-preview ng-if="vm.activeView==='thumbs'" source="{{channel.preview_url}}">
+                            </div>
+                            <div class="infobar">
+                                    <span class="stream-name pull-left">
+                                    <i class="fa fa-circle"
+                                       zx-icon-status-class="channel.generalStatus"
+                                       is-enabled="channel.is_enabled">
+                                    </i>
+                                    {{vm.statuses[channel.generalStatus]|translate}}
+                                    </span>
+                                <span class="uptime"><b>{{channel.name}}</b></span>
+                                <span class="pull-right"
+                                      ng-if="channel.good_outputs">
+                                    <i class="fa fa-circle"
+                                       zx-icon-status-class="'good'"
+                                       ng-if="channel.good_outputs">
+                                    </i>
+                                    {{channel.good_outputs}}
+                                </span>
+                                <span class="pull-right"
+                                      ng-if="channel.bad_outputs">
+                                    <i class="fa fa-circle"
+                                       zx-icon-status-class="'bad'"
+                                       ng-if="channel.bad_outputs">
+                                    </i>
+                                    {{channel.bad_outputs}}
+                                </span>
+                                <span class="pull-right"
+                                      ng-if="channel.disabled_outputs">
+                                    <i class="fa fa-circle"
+                                       zx-icon-status-class="'disabled'"
+                                       ng-if="channel.disabled_outputs">
+                                    </i>
+                                        {{channel.disabled_outputs}}
+                                </span>
+                                <span class="pull-right"
+                                      ng-if="!channel.good_outputs&&!channel.bad_outputs&&!channel.disabled_outputs">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-hide="vm.selectedChannel">
+        <hr class="info-msg">
+        <h4 class="info-msg">{{'SELECT' | translate }} {{'DELIVERY_CHANNEL' | translate }} {{'ABOVE' | translate }}</h4>
+        <div class="row info-msg" style="min-height: 250px;">
+        </div>
+    </div>
+    <hr ng-class="{'info-details': !vm.selectedChannel}">
+
+    <h4 ng-class="{'info-details': !vm.selectedChannel}">{{'DELIVERY_CHANNEL' | translate }}: {{vm.selectedChannel.name}}</h4>
+
+    <div class="row" ng-class="{'info-details': !vm.selectedChannel}">
+        <div class="col-md-12">
+            <div class="tabs-style-2">
+                <!-- Nav tabs -->
+                <uib-tabset active="active">
+                    <uib-tab index="0">
+                        <uib-tab-heading>
+                            <i class="fa fa-list-ul pr-10"></i>{{'DETAILS' | translate }}
+                        </uib-tab-heading>
+                        <form name="editFromChannel" novalidate>
+                            <div class="tableheader">
+                                <span class="title">&nbsp;</span>
+                                <div class="pull-right">
+                                    <button class="btn btn-primary edit-alt"
+                                            ng-click="vm.editChannel();"
+                                            translate>
+                                        BTN_EDIT
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-warning edit-alt"
+                                            ng-click="vm.setStatusChannels();"
+                                            ng-hide="!vm.selectedChannel.is_enabled"
+                                            translate>
+                                        BTN_DISABLE
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-success edit-alt"
+                                            ng-click="vm.setStatusChannels();"
+                                            ng-hide="vm.selectedChannel.is_enabled"
+                                            translate>
+                                        BTN_ENABLE
+                                    </button>
+                                    <button class="btn btn-danger edit-alt"
+                                            ng-click="vm.deleteChannel();"
+                                            translate>
+                                        BTN_DELETE
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-horizontal form-condensed">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label" translate>CHANNEL_NAME</label>
+                                            <div class="col-sm-8">
+                                                <p class="form-control-static edit-alt">
+                                                    {{vm.selectedChannel.name}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label" translate>ACCESS_TAG</label>
+                                            <div class="col-sm-8">
+                                                <p class="form-control-static edit-alt">
+                                                    {{vm.selectedChannel.resource_tag_name}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">
+                                                {{'OUTPUT'|translate}} {{'CLUSTER'|translate}}
+                                            </label>
+                                            <div class="col-sm-8">
+                                                <p class="form-control-static">
+                                                    {{vm.selectedChannel.broadcasterCluster.name}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">
+                                                {{'PUBLIC'|translate}} {{'OUTPUT'|translate}}</label>
+                                            <div class="col-sm-7">
+                                                <p class="form-control-static hiddenmidden">
+                                                    {{vm.selectedChannel.publicOutput}}
+                                                </p>
+                                            </div>
+                                            <div class="col-sm-1" style="padding: 0px;">
+                                                <a href="javascript:;"
+                                                   class='btn btn-xs'
+                                                   ng-click="vm.openModalPreview();"
+                                                   style="padding: 7px 8px;">
+                                                    <i class="fa fa-play"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">{{'PRIMARY'|translate}} {{'SOURCE'|translate}}</label>
+                                            <div class="col-sm-8">
+                                                <p class="form-control-static edit-alt">
+                                                    <i class="fa fa-circle"
+                                                       zx-icon-status-class="vm.selectedChannel.generalStatus"
+                                                       is-enabled="vm.selectedChannel.primerySource.is_enabled"></i>
+                                                    {{vm.selectedChannel.primerySource.name}}
+                                                    {{(vm.selectedChannel.primerySource.name=== vm.selectedChannel.active_source)?"[Active]":""}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">{{'SECONDARY'|translate}} {{'SOURCE'|translate}}</label>
+                                            <div class="col-sm-8">
+                                                <p class="form-control-static edit-alt" ng-show="vm.selectedChannel.alt_source_id">
+                                                    <i class="fa fa-circle"
+                                                       zx-icon-status-class="vm.selectedChannel.generalStatus"
+                                                       is-enabled="vm.selectedChannel.altSource.is_enabled"></i>
+                                                    {{vm.selectedChannel.altSource.name}}
+                                                    {{(vm.selectedChannel.altSource.state === vm.selectedChannel.active_source)?"[Active]":""}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </uib-tab>
+                    <uib-tab index="1">
+                        <uib-tab-heading>
+                            <i class="fa fa-share-square pr-10"></i>
+                            {{'ZIXI_PUSH'|translate}}
+                            <span class="badge badge-danger"
+                                  ng-if="vm.zixiPushError!==0">
+                            {{vm.zixiPushError!==0?vm.zixiPushError:""}}
+                            </span>
+                        </uib-tab-heading>
+                        <div class="row">
+
+                            <!-- main start -->
+                            <!-- ================ -->
+                            <div class="main col-md-12">
+
+                                <div class="tableheader">
+                                    <span class="title">&nbsp;</span>
+                                    <button class="btn pull-right"
+                                            style="margin-left:10px"
+                                            ng-click="vm.getChannelDetail(vm.selectedChannel);">
+                                        <i class="fa fa-refresh"></i>
+                                    </button>
+                                    <button class="btn btn-primary pull-right"
+                                            ng-click="vm.openModalAddZixiPush();">
+                                        <i class="fa fa-plus"></i>
+                                        {{'BTN_ADD'|translate}} {{'ZIXI_PUSH'|translate}}
+                                    </button>
+                                </div>
+                                <div class="table-scrollable clearfix">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th> #</th>
+                                            <th translate> STATUS</th>
+                                            <th translate> NAME</th>
+                                            <th translate> TARGET</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="item in vm.selectedChannel.zixiPush">
+                                            <td> {{$index+1}}</td>
+                                            <td><i class="fa fa-circle"
+                                                   zx-icon-status-class="item.generalStatus">
+                                            </i>
+                                                {{((item.is_enabled)?vm.statuses[item.generalStatus]:"DISABLED")|translate}}
+                                            </td>
+                                            <td> {{item.name}}</td>
+                                            <td> {{item.target}}</td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.editZixiPush(item)">
+                                                <i class="fa fa-cog"></i>
+                                                {{'BTN_EDIT'|translate}}
+                                            </a>
+                                            </td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.openModalHistory(item);">
+                                                <i class="fa fa-line-chart"></i>
+                                                {{'HISTORY'|translate}}
+                                            </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:;"
+                                                   ng-hide="item.is_enabled"
+                                                   ng-click="vm.setStatusZixiPush(item);">
+                                                    <i class="fa fa-ban"></i>
+                                                    {{'BTN_ENABLE'|translate}}
+                                                </a>
+                                                <a href="javascript:;"
+                                                   ng-show="item.is_enabled"
+                                                   ng-click="vm.setStatusZixiPush(item);">
+                                                    <i class="fa fa-ban"></i>
+                                                    {{'BTN_DISABLE'|translate}}
+                                                </a>
+                                            </td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.deleteZixiPush(item);">
+                                                <i class="fa fa-trash"></i>
+                                                {{'BTN_DELETE'|translate}}
+                                            </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab index="2">
+                        <uib-tab-heading>
+                            <i class="fa fa-share-square pr-10"></i>
+                            {{'ZIXI_PULL'|translate}}
+                            <span class="badge badge-danger"
+                                  ng-if="vm.zixiPullError!==0">
+                            {{vm.zixiPullError!==0?vm.zixiPullError:""}}
+                            </span>
+                        </uib-tab-heading>
+                        <div class="row">
+
+                            <!-- main start -->
+                            <!-- ================ -->
+                            <div class="main col-md-12">
+
+                                <div class="tableheader">
+                                    <span class="title">&nbsp;</span>
+                                    <button class="btn pull-right" style="margin-left:10px"
+                                            ng-click="vm.getChannelDetail(vm.selectedChannel);">
+                                        <i class="fa fa-refresh"></i>
+                                    </button>
+                                    <button class="btn btn-primary pull-right"
+                                            ng-click="vm.openModalAddZixiPull();">
+                                        <i class="fa fa-plus"></i>
+                                        {{'BTN_ADD'|translate}} {{'ZIXI_PULL'|translate}}
+                                    </button>
+                                </div>
+                                <div class="table-scrollable clearfix">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th> #</th>
+                                            <th translate> STATUS</th>
+                                            <th translate> NAME</th>
+                                            <th translate> RECEIVER</th>
+                                            <th translate> PASSWORD</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="item in vm.selectedChannel.zixiPull">
+                                            <td> {{$index+1}}</td>
+                                            <td><i class="fa fa-circle"
+                                                   zx-icon-status-class="item.generalStatus">
+                                            </i>
+                                                {{((item.is_enabled)?vm.statuses[item.generalStatus]:"DISABLED")|translate}}
+                                            </td>
+                                            <td> {{item.name}}</td>
+                                            <td> {{item.reciever}}</td>
+                                            <td><a ng-hide="item.isVisiblePass"
+                                                   translate
+                                                   ng-click="vm.showPass(item);">SHOW</a>
+                                                <span style="font-style: italic;" ng-show="item.isVisiblePass">{{item.password}}</span>
+                                            </td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.editZixiPull(item)">
+                                                <i class="fa fa-cog"></i>
+                                                {{'BTN_EDIT'|translate}}
+                                            </a>
+                                            </td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.openModalHistory(item);">
+                                                <i class="fa fa-line-chart"></i>
+                                                {{'HISTORY'|translate}}
+                                            </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:;"
+                                                   ng-hide="item.is_enabled"
+                                                   ng-click="vm.setStatusZixiPull(item);">
+                                                    <i class="fa fa-ban"></i>
+                                                    {{'BTN_ENABLE'|translate}}
+                                                </a>
+                                                <a href="javascript:;"
+                                                   ng-show="item.is_enabled"
+                                                   ng-click="vm.setStatusZixiPull(item);">
+                                                    <i class="fa fa-ban"></i>
+                                                    {{'BTN_DISABLE'|translate}}
+                                                </a>
+                                            </td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.deleteZixiPull(item);">
+                                                <i class="fa fa-trash"></i>
+                                                {{'BTN_DELETE'|translate}}
+                                            </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab index="3">
+                        <uib-tab-heading>
+                            <i class="fa fa-share-square pr-10"></i>
+                            {{'RTMP_PUSH'|translate}}
+                            <span class="badge badge-danger"
+                                  ng-if="vm.rtmpPushError!==0">
+                            {{vm.rtmpPushError!==0?vm.rtmpPushError:""}}
+                            </span>
+                        </uib-tab-heading>
+                        <div class="row">
+
+                            <!-- main start -->
+                            <!-- ================ -->
+                            <div class="main col-md-12">
+
+                                <div class="tableheader">
+                                    <span class="title">&nbsp;</span>
+                                    <button class="btn pull-right"
+                                            style="margin-left:10px"
+                                            ng-click="vm.getChannelDetail(vm.selectedChannel);">
+                                        <i class="fa fa-refresh"></i>
+                                    </button>
+                                    <button class="btn btn-primary pull-right"
+                                            ng-click="vm.openModalAddRtmpPush();">
+                                        <i class="fa fa-plus"></i>
+                                        {{'BTN_ADD'|translate}} {{'RTMP_PUSH'|translate}}
+                                    </button>
+                                </div>
+                                <div class="table-scrollable clearfix">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th> #</th>
+                                            <th translate> STATUS</th>
+                                            <th translate> NAME</th>
+                                            <th translate> TARGET</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="item in vm.selectedChannel.rtmpPush">
+                                            <td> {{$index+1}}</td>
+                                            <td><i class="fa fa-circle"
+                                                   zx-icon-status-class="item.generalStatus">
+                                            </i>
+                                                {{((item.is_enabled)?vm.statuses[item.generalStatus]:"DISABLED")|translate}}
+                                            </td>
+                                            <td> {{item.name}}</td>
+                                            <td> {{item.target}}</td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.editRtmpPush(item)">
+                                                <i class="fa fa-cog"></i>
+                                                {{'BTN_EDIT'|translate}}
+                                            </a>
+                                            </td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.openModalHistory(item);">
+                                                <i class="fa fa-line-chart"></i>
+                                                {{'HISTORY'|translate}}
+                                            </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:;"
+                                                   ng-hide="item.is_enabled"
+                                                   ng-click="vm.setStatusRtmpPush(item);">
+                                                    <i class="fa fa-ban"></i>
+                                                    {{'BTN_ENABLE'|translate}}
+                                                </a>
+                                                <a href="javascript:;"
+                                                   ng-show="item.is_enabled"
+                                                   ng-click="vm.setStatusRtmpPush(item);">
+                                                    <i class="fa fa-ban"></i>
+                                                    {{'BTN_DISABLE'|translate}}
+                                                </a>
+                                            </td>
+                                            <td><a href="javascript:;"
+                                                   ng-click="vm.deleteRtmpPush(item);">
+                                                <i class="fa fa-trash"></i>
+                                                {{'BTN_DELETE'|translate}}
+                                            </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab index="4">
+                        <uib-tab-heading>
+                            <i class="fa fa-exclamation pr-10"></i> {{'EVENTS'|translate}}
+                        </uib-tab-heading>
+                        <div class="row">
+                            <div class="main col-md-12">
+                                <zixi-events show-pagination="true" show-controls="reload"
+                                             object-type="delivery_channel"
+                                             object-name="{{vm.selectedChannel.name}}"></zixi-events>
+                            </div>
+                        </div>
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="modal-header">
+    <button type="button"
+            class="close"
+            ng-click="historyVm.closeModal()"
+            aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title" translate>HISTORY</h4>
+</div>
+<div class="modal-body">
+    <iframe name="graph_iframe"
+            ng-src="{{historyVm.getSourceURL()}}"
+            style="height: 350px; width: 100%"
+            frameborder="no"
+            scrolling="no"
+            marginwidth="0"
+            marginheight="0"
+            hspace="0"
+            vspace="0">
+    </iframe>
+    <table class="avp" style="width: 800px; text-align: center;">
+        <tr>
+            <td><a target="graph_iframe"
+                   ng-href="{{historyVm.getSourceURL()}}"
+                   ng-click="historyVm.selectTime='from=now-1h&to=now'">
+                <i class="fa fa-clock-o"> </i>
+                1 {{'HOUR' | translate}}
+            </a>
+            </td>
+            <td><a target="graph_iframe"
+                   ng-href="{{historyVm.getSourceURL()}}"
+                   ng-click="historyVm.selectTime='from=now-12h&to=now'">
+                <i class="fa fa-clock-o"> </i>
+                12 {{'HOURS' | translate}}
+            </a>
+            </td>
+            <td><a target="graph_iframe"
+                   ng-href="{{historyVm.getSourceURL()}}"
+                   ng-click="historyVm.selectTime='from=now-1d&to=now'">
+                <i class="fa fa-clock-o"> </i>
+                1 {{'DAY' | translate}}
+            </a>
+            </td>
+            <td><a target="graph_iframe"
+                   ng-href="{{historyVm.getSourceURL()}}"
+                   ng-click="historyVm.selectTime='from=now-1w&to=now'">
+                <i class="fa fa-clock-o"> </i>
+                1 {{'WEEK' | translate}}
+            </a>
+            </td>
+            <td><a target="graph_iframe"
+                   ng-href="{{historyVm.getSourceURL()}}"
+                   ng-click="historyVm.selectTime='from=now-30d&to=now'">
+                <i class="fa fa-clock-o"> </i>
+                1 {{'MOUNTH' | translate}}
+            </a>
+            </td>
+            <td><a target="graph_iframe"
+                   ng-href="{{historyVm.getSourceURL()}}"
+                   ng-click="historyVm.selectTime='from=now-1y&to=now'">
+                <i class="fa fa-clock-o"> </i>
+                1 {{'YEAR' | translate}}
+            </a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" type="button" ng-click="historyVm.closeModal()" translate>BTN_CLOSE</button>
+</div>
+

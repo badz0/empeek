@@ -1,0 +1,167 @@
+<div class="modal-header">
+    <button type="button"
+            class="close"
+            aria-label="Close"
+            ng-click="addVm.closeModal()">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title" translate>PUBLISHING_TARGET</h4>
+</div>
+<form name="targetForm"
+      ng-submit="targetForm.$valid && addVm.saveNewTarget()"
+      novalidate>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group" ng-class="{'has-error': targetForm.$submitted && targetForm.TargetName.$error.required}" >
+                    <label class="control-label" translate>
+                        NAME
+                    </label>
+                    <input type="text"
+                           name="TargetName"
+                           class="form-control"
+                           ng-model="addVm.name"
+                           placeholder="{{'NAME'|translate}}"
+                           required/>
+                    <div class="help-block" ng-show="targetForm.$submitted">
+                        <span ng-show="targetForm.TargetName.$error.required">{{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{'has-error': targetForm.$submitted && targetForm.ResourceTag.$error.required}">
+                    <label class="control-label" translate>
+                        ACCESS_TAG
+                    </label>
+                    <select class="form-control"
+                            name="ResourceTag"
+                            ng-options="item.id as item.name for item in addVm.resourceTags"
+                            ng-class="{'select-placeholder': !addVm.resource_tag_id}"
+                            ng-model="addVm.resource_tag_id"
+                            required>
+                        <option value="" disabled selected>{{'SELECT'|translate}} {{'ACCESS_TAG'| translate}}</option>
+                    </select>
+                    <div class="help-block" ng-show="targetForm.$submitted">
+                        <span ng-show="targetForm.ResourceTag.$error.required">{{'ACCESS_TAG'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" translate>
+                        TYPE
+                    </label>
+                    <br>
+                    <label class="radio-inline">
+                        <input type="radio"
+                               name="type"
+                               id="type-s3"
+                               value="s3"
+                               ng-init="addVm.type = 's3'"
+                               jq-uniform
+                               ng-model="addVm.type">
+                        S3 {{'BUCKET'|translate}}
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio"
+                               name="type"
+                               id="type-http"
+                               value="http"
+                               jq-uniform
+                               ng-model="addVm.type">
+                        HTTP
+                    </label>
+                </div>
+                <div ng-show="addVm.type">
+                    <div class="form-group" ng-if="addVm.type === 's3'" ng-class="{'has-error': targetForm.$submitted && (targetForm.s3Url.$error.required || targetForm.s3Url.$error.pattern )}" >
+                        <label class="control-label">S3 URI</label>
+                        <input type="url"
+                               name="s3Url"
+                               placeholder="S3 URI"
+                               class="form-control"
+                               ng-model="addVm.ingest_url"
+                               ng-pattern="'^(http)?://.+'"
+                               required/>
+                        <div class="help-block" ng-show="targetForm.$submitted">
+                            <span ng-show="targetForm.s3Url.$error.required || targetForm.s3Url.$error.pattern">{{'INVALID'|translate}} URL</span>
+                        </div>
+                        <span id="helpBlock" class="help-block">e.g. http://mybucket.s3.amazonaws.com/my/path/</span>
+                    </div>
+                    <div class="form-group" ng-if="addVm.type === 's3'" ng-class="{'has-error': targetForm.$submitted && targetForm.accessKeyId.$error.required}">
+                        <label class="control-label">{{'ACCESS_KEY'|translate}} ID</label>
+                        <input type="text"
+                               placeholder="{{'ACCESS_KEY'|translate}} ID"
+                               name="accessKeyId"
+                               class="form-control"
+                               ng-model="addVm.aws_access_key_id"
+                               required/>
+                        <div class="help-block" ng-show="targetForm.$submitted">
+                            <span ng-show="targetForm.accessKeyId.$error.required">{{'ACCESS_KEY'|translate}} ID {{'CANNOT_BE_EMPTY'| translate}}</span>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="addVm.type === 's3'" ng-class="{'has-error': targetForm.$submitted && targetForm.accessKey.$error.required}">
+                        <label class="control-label">{{'SECRET'|translate}} {{'ACCESS_KEY'|translate}}</label>
+                        <input type="text"
+                               placeholder="{{'SECRET'|translate}} {{'ACCESS_KEY'|translate}}"
+                               name="accessKey"
+                               class="form-control"
+                               ng-model="addVm.aws_secret_key"
+                               required/>
+                        <div class="help-block" ng-show="targetForm.$submitted">
+                            <span ng-show="targetForm.accessKey.$error.required">{{'SECRET'|translate}} {{'ACCESS_KEY'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                        </div>
+                    </div>
+                    <div class="form-group " ng-if="addVm.type !== 's3'" ng-class="{'has-error': targetForm.$submitted && (targetForm.ingestUrl.$error.required || targetForm.ingestUrl.$error.pattern )}">
+                        <label class="control-label">Ingest URL</label>
+                        <input name="ingestUrl"
+                               type="url"
+                               class="form-control"
+                               ng-model="addVm.ingest_url"
+                               ng-pattern="'^(http|https)?:(\/\/)?.+'"
+                               required/>
+                        <div class="help-block" ng-show="targetForm.$submitted">
+                            <span ng-show="targetForm.ingestUrl.$error.required || targetForm.ingestUrl.$error.pattern">{{'INVALID'|translate}} URL</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group " ng-if="addVm.type !== 's3'" ng-class="{'has-error': targetForm.$submitted && targetForm.playbackUrl.$error.pattern}">
+                        <label class="control-label">Playback URL</label>
+                        <input name="playbackUrl"
+                               type="url"
+                               class="form-control"
+                               ng-model="addVm.playback_url"
+                               ng-pattern="'^(http|https)?:(\/\/)?.+'"/>
+                        <div class="help-block" ng-show="targetForm.$submitted">
+                            <span ng-show="targetForm.playbackUrl.$error.pattern">{{'INVALID'|translate}} URL</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox"
+                                   name="typeMode"
+                                   jq-uniform
+                                   id="inlineCheckbox3"
+                                   ng-model="addVm.delete_outdated"
+                                   ng-true-value="1"
+                                   ng-false-value="0"> {{'DELETE_OUTDATED'| translate}}
+                          </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="addVm.closeModal()"
+                translate>
+            BTN_CANCEL
+        </button>
+        <button type="submit"
+                class="btn btn-primary"
+                data-dismiss="modal"
+                translate>
+            BTN_SAVE
+        </button>
+    </div>
+</form>
+

@@ -1,0 +1,137 @@
+<div class="modal-header">
+    <button type="button"
+            class="close"
+            ng-click="addVm.closeModal()"
+            aria-label="Close">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title" translate>DELIVERY_CHANNEL</h4>
+</div>
+<form name="addFormChannel" ng-submit="addFormChannel.$valid && addVm.saveChannel();" novalidate>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group" ng-class="{'has-error': addFormChannel.$submitted && addFormChannel.name.$error.required}" >
+                <label class="control-label" translate>CHANNEL_NAME</label>
+                <input type="text"
+                       name="name"
+                       translate
+                       translate-attr-placeholder="CHANNEL_NAME"
+                       class="form-control"
+                       ng-model="addVm.name"
+                       required/>
+                <div class="help-block" ng-show="addFormChannel.$submitted">
+                    <span ng-show="addFormChannel.name.$error.required">
+                        {{'CHANNEL_NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                    </span>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error': addFormChannel.$submitted && addFormChannel.resource_tag.$error.required}" >
+                <label class="control-label" translate>ACCESS_TAG</label>
+                <select class="form-control"
+                        name="resource_tag"
+                        ng-model="addVm.resource_tag_id"
+                        ng-class="{'select-placeholder': !addVm.resource_tag_id}"
+                        ng-options="item.id as item.name for item in addVm.channelProperty.resource_tags"
+                        required>
+                    <option value="" disabled selected>
+                        {{'SELECT'|translate}} {{'ACCESS_TAG'|translate}}
+                    </option>
+                </select>
+                <div class="help-block" ng-show="addFormChannel.$submitted">
+                    <span ng-show="addFormChannel.resource_tag.$error.required">
+                        {{'ACCESS_TAG'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                    </span>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error': addFormChannel.$submitted && addFormChannel.output_cluster.$error.required}">
+                <label class="control-label">{{'OUTPUT'|translate}} {{'CLUSTER'|translate}}</label>
+                <select class="form-control"
+                        name="output_cluster"
+                        ng-model="addVm.broadcaster_cluster_id"
+                        ng-class="{'select-placeholder': !addVm.broadcaster_cluster_id}"
+                        ng-options="item.id as item.name for item in addVm.channelProperty.clusters"
+                        required>
+                    <option value="" disabled selected>{{'SELECT'|translate}} {{'OUTPUT'|translate}} {{'CLUSTER'|translate}}</option>
+                </select>
+                <div class="help-block" ng-show="addFormChannel.$submitted">
+                    <span ng-show="addFormChannel.output_cluster.$error.required">
+                        {{'OUTPUT'|translate}} {{'CLUSTER'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': addFormChannel.$submitted && addFormChannel.password.$error.required}">
+                <label class="control-label">{{'PUBLIC'|translate}} {{'OUTPUT'|translate}}</label>
+                <div class="input-group">
+                              <span class="input-group-addon clear">
+                                <input type="checkbox"
+                                       id="public_output_check"
+                                       ng-model="addVm.is_public_output"
+                                       jq-uniform>
+                                  <label for="public_output_check" translate>ALLOW</label>
+                              </span>
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           translate
+                           translate-attr-placeholder="PASSWORD"
+                           ng-disabled="!addVm.is_public_output"
+                           ng-model="addVm.public_output_password"
+                           ng-required="addVm.is_public_output">
+                </div>
+                <div class="help-block" ng-show="addFormChannel.$submitted">
+                    <span ng-show="addFormChannel.password.$error.required">
+                        {{'PASSWORD'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-class="{'has-error': addFormChannel.$submitted && addFormChannel.primary_source.$error.required}">
+                <label class="control-label">{{'PRIMARY'|translate}} {{'SOURCE'|translate}}</label>
+                <select class="form-control"
+                        name="primary_source"
+                        ng-model="addVm.source_id"
+                        ng-options="item.id as item.name for item in addVm.channelProperty.sources"
+                        ng-class="{'select-placeholder': !addVm.source_id}"
+                        required>
+                    <option value="" disabled selected>
+                        {{'SELECT'|translate}} {{'PRIMARY'|translate}} {{'SOURCE'|translate}}
+                    </option>
+                </select>
+                <div class="help-block" ng-show="addFormChannel.$submitted">
+                    <span ng-show="addFormChannel.primary_source.$error.required">
+                        {{'PRIMARY'|translate}} {{'SOURCE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                    </span>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error': addFormChannel.$submitted && addFormChannel.secondary_source.$error.required}">
+                <label class="control-label">{{'SECONDARY'|translate}} {{'SOURCE'|translate}}</label>
+                <select class="form-control"
+                        name="secondary_source"
+                        ng-model="addVm.alt_source_id"
+                        ng-options="item.id as item.name for item in addVm.channelProperty.sources">
+                    <option value="" translate>NONE</option>
+                </select>
+                <div class="help-block" ng-show="addFormChannel.$submitted">
+                    <span ng-show="addFormChannel.secondary_source.$error.required">
+                        {{'SECONDARY'|translate}} {{'SOURCE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default"
+            type="button"
+            ng-click="addVm.closeModal()"
+            translate>
+        BTN_CANCEL
+    </button>
+    <button type="submit"
+            class="btn btn-primary"
+            translate>
+        BTN_SAVE
+    </button>
+</div>
+</form>

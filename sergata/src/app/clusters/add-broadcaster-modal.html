@@ -1,0 +1,92 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="addBroadcasterVm.closeModal()">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">{{'BTN_ADD' | translate}} {{'BROADCASTER' | translate}} {{'TO' | translate}}
+        '{{addBroadcasterVm.cluster.name}}'</h4>
+</div>
+<form name="addBroadcasterForm" ng-submit="addBroadcasterForm.$valid && addBroadcasterVm.saveBroadcaster()" novalidate>
+    <div class="modal-body">
+        <div class="form-group"
+             ng-class="{'has-error': addBroadcasterForm.$submitted && (addBroadcasterForm.name.$error.required || addBroadcasterForm.name.$error.pattern)}">
+            <label class="control-label" translate>NAME</label>
+            <input type="text" class="form-control"
+                   id="cluster-name"
+                   name="name"
+                   ng-model="addBroadcasterVm.name"
+                   ng-pattern="addBroadcasterVm.namePattern"
+                   zx-unique-with="addBroadcasterVm.cluster.name"
+                   placeholder="{{'NAME' |translate}}"
+                   required/>
+            <div class="help-block" ng-show="addBroadcasterForm.$submitted">
+                <span ng-show="addBroadcasterForm.name.$error.required">{{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                <span ng-show="addBroadcasterForm.name.$error.pattern" translate>PH_BROADCASTER_NAME</span>
+            </div>
+        </div>
+        <div class="form-group"
+             ng-class="{'has-error': addBroadcasterForm.$submitted && (addBroadcasterForm.streaming_ip.$error.required || addBroadcasterForm.streaming_ip.$error.pattern)}">
+            <label class="control-label" translate>STREAMING_IP</label>
+            <div class="input-group">
+                <span class="input-group-addon clear">
+                    <input type="checkbox" id='auto-detect' name="is_auto_detect" jq-uniform
+                           ng-model="addBroadcasterVm.is_auto_detect"
+                           ng-change="addBroadcasterVm.clearStreamingIP()">
+                    <label for='auto-detect' translate>AUTO_DETECT</label>
+                </span>
+                <input type="text" class="form-control"
+                       name="streaming_ip"
+                       ng-pattern="addBroadcasterVm.ipv4Pattern"
+                       ng-model="addBroadcasterVm.streaming_ip"
+                       translate
+                       translate-attr-placeholder="STREAMING_IP"
+                       ng-disabled="addBroadcasterVm.is_auto_detect"
+                       ng-required="!addBroadcasterVm.is_auto_detect">
+            </div>
+            <div class="help-block" ng-show="addBroadcasterForm.$submitted">
+                <span ng-show="addBroadcasterForm.streaming_ip.$error.required">IP {{'CANNOT_BE_EMPTY'| translate}}</span>
+                <span ng-show="addBroadcasterForm.streaming_ip.$error.pattern" translate>INVALID_IPV4_ADDRESS</span>
+            </div>
+        </div>
+        <div class="form-group"
+             ng-class="{'has-error': addBroadcasterForm.$submitted && addBroadcasterForm.api_user.$error.required}">
+            <label class="control-label" translate>API_USER</label>
+            <input type="text"
+                   name="api_user"
+                   class="form-control"
+                   value="admin"
+                   translate
+                   translate-attr-placeholder="API_USER"
+                   ng-model="addBroadcasterVm.api_user"
+                   required/>
+            <div class="help-block" ng-show="addBroadcasterForm.$submitted">
+                <span ng-show="addBroadcasterForm.api_user.$error.required">API {{'USER'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+            </div>
+        </div>
+        <div class="form-group"
+             ng-class="{'has-error': addBroadcasterForm.$submitted && addBroadcasterForm.api_password.$error.required}">
+            <label class="control-label">API {{'PASSWORD' | translate}}</label>
+            <input type="password"
+                   name="api_password"
+                   class="form-control"
+                   ng-model="addBroadcasterVm.api_password"
+                   placeholder="API {{'PASSWORD' | translate}}"
+                   required/>
+            <div class="help-block" ng-show="addBroadcasterForm.$submitted">
+                <span ng-show="addBroadcasterForm.api_password.$error.required">API {{'PASSWORD'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">SSH {{'KEY' | translate}}</label>
+            <select class="form-control"
+                    name="accessKey"
+                    ng-model="addBroadcasterVm.remote_access_key_id"
+                    ng-options="remoteAccessKey.id as remoteAccessKey.name for remoteAccessKey in addBroadcasterVm.remoteAccessKeys">
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" type="button" ng-click="addBroadcasterVm.closeModal()" translate>BTN_CLOSE
+        </button>
+        <button class="btn btn-primary" type="submit" translate>BTN_SAVE</button>
+    </div>
+</form>

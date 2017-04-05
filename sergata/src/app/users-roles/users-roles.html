@@ -1,0 +1,20 @@
+<div class="portlet light profile-sidebar-portlet bordered">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- tabs start -->
+            <div class="tabs-style-2">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist" id="accounttabs">
+                    <li class="nav-item" ng-class="vm.isCurrent(t)" ng-repeat="t in vm.tabRoutes">
+                        <a ui-sref="{{t.name}}" class="nav-link">
+                            <i ng-class="t.tabSettings.iconClass"></i>
+                            {{t.tabSettings.content | translate}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- tabs end -->
+        </div>
+    </div>
+    <div ui-view></div>
+</div>

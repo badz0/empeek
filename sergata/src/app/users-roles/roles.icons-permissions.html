@@ -1,0 +1,24 @@
+<div>
+    <div ng-if="!iconsPerVm.editMode">
+        <i class="fa fa-pencil" ng-class="{'nopermission': iconsPerVm.access_level < 2}"></i>
+        <i class="fa fa-eye" ng-class="{'nopermission': iconsPerVm.access_level < 1}"></i>
+        <i class="fa fa-envelope" ng-class="{'nopermission': !iconsPerVm.notify}"></i>
+    </div>
+    <div ng-if="iconsPerVm.editMode" class="row">
+        <div class="col-md-3" ng-show="iconsPerVm.titleName">{{iconsPerVm.titleName}}</div>
+        <div class="col-md-6">
+            <label class="control-label radio-inline">
+                <input type="radio" ng-model="iconsPerVm.access_level" value='0' jq-uniform/>{{'NONE'|translate}}
+            </label>
+            <label class="control-label radio-inline">
+                <input type="radio" ng-model="iconsPerVm.access_level" value='1' jq-uniform/>{{'VIEW'|translate}}
+            </label>
+            <label class="control-label radio-inline">
+                <input type="radio" ng-model="iconsPerVm.access_level" value='2' jq-uniform/>{{'BTN_EDIT'|translate}}
+            </label>
+            <label class="control-label checkbox-inline">
+                <input type="checkbox" ng-model="iconsPerVm.notify" jq-uniform/>{{'NOTIFICATIONS'|translate}}
+            </label>
+        </div>
+    </div>
+</div>

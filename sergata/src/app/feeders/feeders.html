@@ -1,0 +1,333 @@
+<div class="portlet light profile-sidebar-portlet bordered">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tableheader">
+                <span class="title" translate>FEEDERS</span>
+                <div class="pull-right">
+                    <button class="btn btn-primary"
+                            ng-click="vm.openAddFeederModal()">
+                        <i class="fa fa-plus"></i>
+                        {{ 'BTN_ADD' | translate}} {{'FEEDER' | translate}}
+                    </button>
+                    <button class="btn"
+                            style="margin-left: 8px"
+                            ng-click="vm.updateRecords()">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+                <div class="search-query">
+                    <div class="input-group">
+                        <input type="text"
+                               class="form-control"
+                               ng-model="searchText"
+                               translate
+                               translate-attr-placeholder="SEARCH"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" 
+                                    type="button">
+                                  <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="table-scrollable clearfix" id="clustertable">
+                <table class="table table-hover selectable">
+                    <thead>
+                    <tr>
+                        <th> #</th>
+                        <th translate> STATUS</th>
+                        <th translate> NAME</th>
+                        <th translate> TUNNEL_PORT</th>
+                        <th translate> CPU</th>
+                        <th translate> RAM</th>
+                        <th translate> VERSION</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in filteredItems = (vm.feeders | multifilter:searchText:['name', 'port']) track by item.id"
+                        ng-click="vm.selectFeeder(item)"
+                        ng-class="{'select-row': vm.selectedFeeder.id === item.id}">
+                        <td> {{$index+1}}</td>
+                        <td><i class="fa fa-circle"
+                               zx-icon-status-class="item.generalStatus"
+                               is-enabled="item.is_enabled"></i>
+                            {{vm.getStatus(item)|translate}}
+                        </td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.port}}</td>
+                        <td>{{!!item.status.cpu?(item.status.cpu | number:0)+'%':'-'}}</td>
+                        <td>{{!!item.status.ram?(item.status.ram | number:0)+'%':'-'}}</td>
+                        <td>{{item.about.version}}</td>
+                        <td><a href="{{item.configure_link}}" target="_blank"><i class="fa fa-eye"></i> {{'CONFIGURE'|translate}}</a></td>
+                    </tr>
+                    <tr ng-if="filteredItems.length===0">
+                        <td colspan="7" class="text-center" translate>NO_RESULTS</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div ng-hide="vm.selectedFeeder">
+        <hr class="info-msg">
+        <h4 class="info-msg"> {{'SELECT' | translate }} {{'FEEDER' | translate }} {{'ABOVE' | translate }}</h4>
+        <div class="row info-msg" style="min-height: 250px;">
+        </div>
+    </div>
+    <hr ng-class="{'info-details': !vm.selectedFeeder}">
+
+    <h4 ng-class="{'info-details': !vm.selectedFeeder}">{{'FEEDER' | translate }}: {{vm.selectedFeeder.name}}</h4>
+
+    <uib-tabset active="active" ng-show="vm.selectedFeeder">
+        <!-- Nav tabs -->
+        <uib-tab index="0">
+            <uib-tab-heading>
+                <i class="fa  fa-list-ul pr-10"></i>
+                <span class="hidden-xs" translate>DETAILS</span>
+                <span class="visible-xs-inline" ng-show="active==0" translate>DETAILS</span>
+            </uib-tab-heading>
+            <!-- Tab panes -->
+            <form name="editingFeederForm" ng-submit="editingFeederForm.$valid && vm.saveEditingFeeder()"
+                  novalidate>
+                <div class="tableheader">
+                    <span class="title">&nbsp;</span>
+                    <div class="pull-right">
+                        <button class="btn btn-primary edit-alt"
+                                type="button"
+                                ng-click="vm.editFeeder()"
+                                translate
+                                ng-hide="vm.showEditFeeder">
+                            BTN_EDIT
+                        </button>
+                        <button class="btn btn-warning edit-alt"
+                                type="button"
+                                ng-click="vm.setStatusFeeder();"
+                                translate
+                                ng-hide="vm.showEditFeeder||!vm.selectedFeeder.is_enabled">
+                            BTN_DISABLE
+                        </button>
+                        <button class="btn btn-success edit-alt"
+                                type="button"
+                                ng-click="vm.setStatusFeeder();"
+                                translate
+                                ng-hide="vm.showEditFeeder||vm.selectedFeeder.is_enabled">
+                            BTN_ENABLE
+                        </button>
+                        <button class="btn btn-danger edit-alt"
+                                type="button"
+                                ng-hide="vm.showEditFeeder"
+                                translate
+                                ng-click="vm.deleteSelectFeeder()">
+                            BTN_DELETE
+                        </button>
+                        <button class="btn btn-primary edit" type="submit"
+                                translate
+                                ng-show="vm.showEditFeeder">
+                            BTN_SAVE
+                        </button>
+                        <button type="button"
+                                class="btn edit"
+                                translate
+                                ng-click="vm.cancelEditing()"
+                                ng-show="vm.showEditFeeder">
+                            BTN_CANCEL
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="form-horizontal form-condensed">
+                            <div class="form-group" ng-class="{'has-error': vm.showEditFeeder && editingFeederForm.$submitted && (editingFeederForm.name.$error.required || editingFeederForm.name.$error.pattern)}">
+                                <label class="col-xs-5 control-label" translate>NAME</label>
+                                <div class="col-xs-7">
+                                    <p class="form-control-static edit-alt">
+                                        {{vm.selectedFeeder.name}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-5 control-label" translate>ACCESS_TAG</label>
+                                <div class="col-xs-7">
+                                    <p class="form-control-static edit-alt"
+                                       ng-hide="vm.showEditFeeder">
+                                        {{vm.selectedFeeder.resource_tag_name}}
+                                    </p>
+                                    <select class="form-control edit"
+                                            name="resourceTag"
+                                            ng-show="vm.showEditFeeder"
+                                            ng-model="vm.editingFeeder.resource_tag_id"
+                                            ng-options="resourceTag.id as resourceTag.name for resourceTag in vm.resourceTags">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{'has-error': vm.showEditFeeder && editingFeederForm.$submitted && editingFeederForm.apiUser.$error.required}">
+                                <label class="col-xs-5 control-label" translate>API_USER</label>
+                                <div class="col-xs-7">
+                                    <p class="form-control-static edit-alt"
+                                       ng-hide="vm.showEditFeeder">
+                                        {{vm.selectedFeeder.api_user}}
+                                    </p>
+                                    <input type="text"
+                                           name="apiUser"
+                                           class="form-control input-inline input-medium edit"
+                                           ng-show="vm.showEditFeeder"
+                                           ng-model="vm.editingFeeder.api_user"
+                                           required>
+                                    <div class="help-block" ng-show="vm.showEditFeeder && editingFeederForm.$submitted">
+                                        <span ng-show="editingFeederForm.apiUser.$error.required">{{'API_USER'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{'has-error': vm.showEditFeeder && editingFeederForm.$submitted && editingFeederForm.password.$error.required}">
+                                <label class="col-xs-5 control-label" translate>API_PASSWORD</label>
+                                <div class="col-xs-7">
+                                    <p class="form-control-static edit-alt"
+                                       ng-hide="vm.showEditFeeder">
+                                        ****
+                                    </p>
+                                    <input type="password"
+                                           name="password"
+                                           class="form-control input-inline input-medium edit"
+                                           ng-show="vm.showEditFeeder"
+                                           ng-model="vm.editingFeeder.api_password"
+                                           required>
+                                    <div class="help-block" ng-show="vm.showEditFeeder && editingFeederForm.$submitted">
+                                        <span ng-show="editingFeederForm.password.$error.required">{{'API_PASSWORD'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-5 control-label" translate>TUNNEL_PORT</label>
+                                <p class="col-xs-7 form-control-static">
+                                    {{vm.selectedFeeder.port}}</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-5 control-label">SSH {{'KEY'|translate}}</label>
+                                <div class="col-xs-7">
+                                    <p class="form-control-static edit-alt"
+                                       ng-hide="vm.showEditFeeder">
+                                        {{vm.selectedFeeder.remote_access_key_name ? vm.selectedFeeder.remote_access_key_name : 'Any'}}
+                                    </p>
+                                    <select class="form-control edit"
+                                            name="accessKey"
+                                            ng-show="vm.showEditFeeder"
+                                            ng-model="vm.editingFeeder.remote_access_key_id"
+                                            ng-options="key.id as key.name for key in vm.remote_access_keys">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Permission Group end -->
+            </form>
+        </uib-tab>
+        <uib-tab index="1">
+            <uib-tab-heading>
+                <i class="fa fa-line-chart pr-10"></i> 
+                <span class="hidden-xs" translate>HISTORY</span>
+                <span class="visible-xs-inline" ng-show="active==1" translate>HISTORY</span>
+            </uib-tab-heading>
+            <div class="row" ng-if="vm.selectedFeeder">
+                <!-- main start -->
+                <!-- ================ -->
+                <div class="main col-md-12">
+
+                    <iframe name="graph_iframe"
+                            ng-if="active==1"
+                            ng-src="{{vm.getSourceURL()}}"
+                            style="height: 350px; width: 100%"
+                            frameborder="no"
+                            scrolling="no"
+                            marginwidth="0"
+                            marginheight="0"
+                            hspace="0"
+                            vspace="0">
+                    </iframe>
+
+                    <div class="row">
+                        <div class="col-sm-2 col-xs-3"><a target="graph_iframe" class='btn btn-link'
+                                                          ng-href="{{historyVm.getSourceURL()}}"
+                                                          ng-click="historyVm.selectTime='from=now-1h&to=now'">
+                            <i class="fa fa-clock-o"> </i>
+                            1 {{'HOUR' | translate}}
+                        </a>
+                        </div>
+                        <div class="col-sm-2 col-xs-3"><a target="graph_iframe" class='btn btn-link'
+                                                          ng-href="{{historyVm.getSourceURL()}}"
+                                                          ng-click="historyVm.selectTime='from=now-12h&to=now'">
+                            <i class="fa fa-clock-o"> </i>
+                            12 {{'HOURS' | translate}}
+                        </a>
+                        </div>
+                        <div class="col-sm-2 col-xs-3"><a target="graph_iframe" class='btn btn-link'
+                                                          ng-href="{{historyVm.getSourceURL()}}"
+                                                          ng-click="historyVm.selectTime='from=now-1d&to=now'">
+                            <i class="fa fa-clock-o"> </i>
+                            1 {{'DAY' | translate}}
+                        </a>
+                        </div>
+                        <div class="col-sm-2 col-xs-3"><a target="graph_iframe" class='btn btn-link'
+                                                          ng-href="{{historyVm.getSourceURL()}}"
+                                                          ng-click="historyVm.selectTime='from=now-1w&to=now'">
+                            <i class="fa fa-clock-o"> </i>
+                            1 {{'WEEK' | translate}}
+                        </a>
+                        </div>
+                        <div class="col-sm-2 col-xs-3"><a target="graph_iframe" class='btn btn-link'
+                                                          ng-href="{{historyVm.getSourceURL()}}"
+                                                          ng-click="historyVm.selectTime='from=now-30d&to=now'">
+                            <i class="fa fa-clock-o"> </i>
+                            1 {{'MOUNTH' | translate}}
+                        </a>
+                        </div>
+                        <div class="col-sm-2 col-xs-3"><a target="graph_iframe" class='btn btn-link'
+                                                          ng-href="{{historyVm.getSourceURL()}}"
+                                                          ng-click="historyVm.selectTime='from=now-1y&to=now'">
+                            <i class="fa fa-clock-o"> </i>
+                            1 {{'YEAR' | translate}}
+                        </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab index="2">
+            <uib-tab-heading>
+                <i class="fa fa-exclamation pr-10"></i> 
+                <span class="hidden-xs" translate>EVENTS</span>
+                <span class="visible-xs-inline" ng-show="active==2" translate>EVENTS</span>
+            </uib-tab-heading>
+            <div class="row">
+                <div class="main col-md-12">
+                    <zixi-events show-pagination="true" show-controls="reload" object-type="feeder" object-name="{{vm.selectedFeeder.name}}"></zixi-events>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab index="3">
+            <uib-tab-heading>
+                <i class="fa  fa-info pr-10"></i>
+                <span class="hidden-xs" translate>CONFIGURATION_HELP</span>
+                <span class="visible-xs-inline" ng-show="active==3" translate>CONFIGURATION_HELP</span>
+            </uib-tab-heading>
+            <!-- Tab panes -->
+            <ol>
+                <li>{{'CONFIGURATION_HELP_LOGIN' | translate}} {{'FEEDER' | translate}} {{'UI' | translate}}</li>
+                <li translate>CONFIGURATION_HELP_GO_SETTINGS_3</li>
+                <li translate>CONFIGURATION_HELP_UPLOAD_KEY</li>
+                <li> {{'CONFIGURATION_HELP_FILL' | translate}}<br/>
+                    {{'HOST' | translate}}: <b>{{vm.dns_prefix}}{{vm.application_host}}</b><br />
+                    {{'USERNAME' | translate}}: <b>{{vm.selectedFeeder.name}}-feeder</b>
+                </li>
+                <li>{{'CONFIGURATION_HELP_CONFIRM_SOURCE' | translate}}<br/>
+                    {{'REMOTE_SOURCE_PORT' | translate}}: <b>{{vm.selectedFeeder.port}}</b>
+                </li>
+            </ol>
+        </uib-tab>
+    </uib-tabset>
+</div>
+

@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="addGroupVm.cancel()"><span
+        aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{'ADD' | translate }} {{'NEW' | translate }} {{'GROUP' | translate }}</h4>
+</div>
+<form name="addGroupForm" novalidate ng-submit="addGroupForm.$valid && addGroupVm.saveGroup()">
+    <div class="modal-body" ng-class="{'has-error' : addGroupForm.$submitted && addGroupForm.group_name.$error.required}">
+        <div class="form-group">
+            <label class="control-label">{{'GROUP' | translate }} {{'NAME' | translate }}</label>
+            <input type="text"
+                   class="form-control"
+                   name="group_name"
+                   required
+                   placeholder="{{'GROUP' | translate }} {{'NAME' | translate }}"
+                   ng-model="addGroupVm.group_name"/>
+            <div class="help-block" ng-show="addGroupForm.$submitted">
+                <span ng-show="addGroupForm.group_name.$error.required">{{'GROUP'|translate}} {{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="addGroupVm.cancel()"
+                translate>
+            BTN_CLOSE
+        </button>
+        <button class="btn btn-primary"
+                type="submit"
+                translate>
+            BTN_SAVE
+        </button>
+    </div>
+</form>

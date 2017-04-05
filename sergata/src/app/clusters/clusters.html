@@ -1,0 +1,338 @@
+<div class="portlet light profile-sidebar-portlet bordered">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tableheader"><span class="title" translate>CLUSTERS</span>
+                <div class="pull-right">
+                    <button class="btn btn-primary" ng-click="vm.openAddClusterModal()">
+                        <i class="fa fa-plus"></i>{{'BTN_ADD'|translate}} {{'CLUSTER'|translate}}
+                    </button>
+                    <button class="btn" style="margin-left: 8px" ng-click="vm.updateRecords()">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+                <div class="search-query">
+                    <div class="input-group">
+                        <input type="text"
+                               class=" form-control"
+                               ng-model="vm.searchTerm"
+                               translate
+                               translate-attr-placeholder="SEARCH"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary"
+                                    type="button">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="table-scrollable clearfix" id="clustertable">
+                <table class="table table-hover" id="zixi-clusters">
+                    <thead>
+                    <tr>
+                        <th> #</th>
+                        <th translate> STATUS</th>
+                        <th translate> NAME</th>
+                        <th translate> SCALING</th>
+                        <th translate> BROADCASTERS</th>
+                        <th> {{'CLUSTER'|translate}} {{'TYPE'|translate}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="cluster in vm.clusters | multifilter:vm.searchTerm:['name'] as filteredClusters track by cluster.id"
+                        ng-click="vm.selectCluster(cluster.dns_prefix)"
+                        ng-class="{'select-row': vm.selectedCluster.dns_prefix === cluster.dns_prefix}">
+                        <td>{{$index+1}}</td>
+                        <td>
+                            <i class="fa fa-circle"
+                               zx-icon-status-class="cluster.generalStatus"
+                               is-enabled="cluster.is_enabled">
+                            </i>
+                            {{(((cluster.state==="pending")&&(cluster.is_enabled))? 'Pending' :
+                            vm.statuses[cluster.generalStatus])|translate}}
+                        </td>
+                        <td>{{cluster.name}}</td>
+                        <td>{{cluster.scaling}}</td>
+                        <td>
+                            <i class="fa fa-circle status-good"
+                               ng-show="cluster.good_outputs!==0 && cluster.good_outputs"></i>
+                            {{cluster.good_outputs!==0 ? cluster.good_outputs : ''}}
+                            <i class="fa fa-circle status-bad"
+                               ng-show="cluster.bad_outputs!==0  && cluster.bad_outputs"></i> {{cluster.bad_outputs!==0
+                            ? cluster.bad_outputs : ''}}
+                            <i class="fa fa-circle status-no"
+                               ng-show="cluster.disabled_outputs!==0  && cluster.disabled_outputs"></i>
+                            {{cluster.disabled_outputs!==0 ? cluster.disabled_outputs : ''}}
+                            <!--<i class="fa fa-circle status-med"></i> 3-->
+                        </td>
+                        <td>
+                            {{cluster.can_input === 1 ? "Input" : ''}}
+                            {{(((cluster.can_input === 1)&&(cluster.can_process === 1))||((cluster.can_input ===
+                            1)&&(cluster.can_output === 1)))?",":""}}
+                            {{cluster.can_output === 1 ? "Output" : ''}}
+                            {{(((cluster.can_output === 1)&&(cluster.can_process === 1))||((cluster.can_output ===
+                            1)&&(cluster.input === 1)))?",":""}}
+                            {{cluster.can_process === 1 ? "Processing" : ''}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="text-center" ng-show="vm.clusters.length && !filteredClusters.length">
+                            {{'NO_RESULTS_FOUND'|translate}}...
+                        </td>
+                        <td colspan="6" class="text-center" ng-show="!vm.clusters.length && !filteredClusters.length">
+                            {{'NO_CLUSTERS'|translate}}...
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div ng-hide="vm.selectedCluster">
+        <hr class="info-msg">
+        <h4 class="info-msg"> {{'SELECT' | translate }} {{'BROADCASTERS_CLUSTER' | translate }} {{'ABOVE' | translate }}</h4>
+        <div class="row info-msg" style="min-height: 250px;"></div>
+    </div>
+    <hr ng-class="{'info-details': !vm.selectedCluster}">
+    <h4 ng-class="{'info-details': !vm.selectedCluster}">{{'BROADCASTERS_CLUSTER' | translate }}: {{vm.selectedCluster.name}}</h4>
+    <div class="row" ng-class="{'info-details': !vm.selectedCluster}">
+        <div class="col-md-12">
+            <div class="tabs-style-2">
+                <uib-tabset active="active">
+                    <uib-tab index="0">
+                        <uib-tab-heading>
+                            <i class="fa  fa-list-ul pr-10"></i>{{'DETAILS' | translate }}
+                        </uib-tab-heading>
+                        <form name="editingClusterForm"
+                              ng-submit="editingClusterForm.$valid && vm.saveEditingCluster(vm.selectedCluster.dns_prefix)"
+                              novalidate>
+                            <div class="tableheader">
+                                <span class="title">&nbsp;</span>
+                                <div class="pull-right">
+                                    <button class="btn btn-primary edit-alt"
+                                            type="button"
+                                            ng-hide="vm.showEditing"
+                                            ng-click="vm.editCluster(vm.selectedCluster)" translate>
+                                        BTN_EDIT
+                                    </button>
+                                    <button class="btn btn-danger edit-alt"
+                                            type="button"
+                                            ng-hide="vm.showEditing"
+                                            ng-click="vm.deleteCluster(vm.selectedCluster.dns_prefix)"
+                                            translate>
+                                        BTN_DELETE
+                                    </button>
+                                    <button class="btn btn-primary edit"
+                                            type="submit"
+                                            ng-show="vm.showEditing" translate>
+                                        BTN_SAVE
+                                    </button>
+                                    <button class="btn edit"
+                                            type="button"
+                                            ng-show="vm.showEditing"
+                                            ng-click="vm.cancelEditing()" translate>
+                                        BTN_CANCEL
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="form-horizontal form-condensed">
+                                        <div class="form-group"
+                                             ng-class="{'has-error': vm.showEditing && editingClusterForm.$submitted && editingClusterForm.nameCluster.$error.required}">
+                                            <label class="col-xs-4 control-label" translate>NAME</label>
+                                            <div class="col-xs-8">
+                                                <p class="form-control-static edit-alt" ng-hide="vm.showEditing">
+                                                    {{vm.selectedCluster.name}}</p>
+                                                <input type="text" name="nameCluster"
+                                                       class="form-control input-inline input-medium edit"
+                                                       ng-show="vm.showEditing"
+                                                       ng-model="vm.editingCluster.name"
+                                                       required>
+                                                <div class="help-block"
+                                                     ng-show="vm.showEditing && editingClusterForm.$submitted">
+                                                    <span ng-show="editingClusterForm.nameCluster.$error.required">{{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group"
+                                             ng-class="{'has-error': vm.showEditing && editingClusterForm.$submitted && (editingClusterForm.domainName.$error.required || editingClusterForm.domainName.$error.pattern || editingClusterForm.domainName.$error.blacklist)}">
+                                            <label class="col-xs-4 control-label" translate>DNS_PREFIX</label>
+                                            <div class="col-xs-8">
+                                                <p class="form-control-static edit-alt">
+                                                    {{vm.selectedCluster.dns_prefix}}.{{vm.customer_dns_prefix}}{{vm.application_host}}
+                                                </p>
+                                                <!--<input type="text" name="domainName"-->
+                                                <!--class="form-control input-inline input-medium edit"-->
+                                                <!--style="width: 120px !important;" ng-show="vm.showEditing"-->
+                                                <!--ng-pattern="vm.namePattern"-->
+                                                <!--ui-validate="{blacklist : '$value != \'feeder\' '}"-->
+                                                <!--ng-model="vm.editingCluster.dns_prefix"-->
+                                                <!--required>-->
+                                                <div class="help-block"
+                                                     ng-show="vm.showEditing && editingClusterForm.$submitted">
+                                                    <span ng-show="editingClusterForm.domainName.$error.required">{{'DNS_PREFIX'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                                    <span ng-show="editingClusterForm.domainName.$error.pattern" translate>PH_DNS_PREFIX_LOWERCASE</span>
+                                                    <span ng-show="editingClusterForm.domainName.$error.blacklist" translate>PH_DNS_PREFIX_EQUAL_FEEDER</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-xs-4 control-label" translate>ACCESS_TAG</label>
+                                            <div class="col-xs-8">
+                                                <p class="form-control-static edit-alt" ng-hide="vm.showEditing">
+                                                    {{vm.selectedCluster.resource_tag_name + " " +
+                                                    vm.editingCluster.resource_tag_name}}</p>
+                                                <select name="resourceTag" class="form-control edit"
+                                                        ng-show="vm.showEditing"
+                                                        ng-model="vm.editingCluster.resource_tag_id"
+                                                        ng-options="resourceTag.id as resourceTag.name for resourceTag in vm.resourceTags">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-xs-4 control-label">{{'CLUSTER'|translate}} {{'TYPE'| translate}}</label>
+                                            <p class="col-xs-8 form-control-static">
+                                                {{vm.selectedCluster.can_input === 1 ? "Input" : ''}}
+                                                {{(((vm.selectedCluster.can_input ===
+                                                1)&&(vm.selectedCluster.can_process ===
+                                                1))||((vm.selectedCluster.can_input ===
+                                                1)&&(vm.selectedCluster.can_output === 1)))?",":""}}
+                                                {{vm.selectedCluster.can_output === 1 ? "Output" : ''}}
+                                                {{(((vm.selectedCluster.can_output ===
+                                                1)&&(vm.selectedCluster.can_process ===
+                                                1))||((vm.selectedCluster.can_output === 1)&&(vm.selectedCluster.input
+                                                === 1)))?",":""}}
+                                                {{vm.selectedCluster.can_process === 1 ? "Processing" : ''}}
+                                            </p>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-xs-4 control-label" translate>SCALING</label>
+                                            <p class="col-xs-8 form-control-static">
+                                                {{vm.selectedCluster.scaling}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </uib-tab>
+                    <uib-tab index="1">
+                        <uib-tab-heading>
+                            <i class="fa  fa-server pr-10"></i> {{'BROADCASTERS'|translate}}
+                            <span class="badge badge-danger"
+                                  ng-show="vm.badBroadcasters">
+                                {{vm.badBroadcasters}}
+                            </span>
+                        </uib-tab-heading>
+                        <!-- main start -->
+                        <!-- ================ -->
+                        <div class="main col-md-12">
+                            <div class="tableheader">
+                                <span class="title">&nbsp;</span>
+                                <div class="pull-right">
+                                    <button class="btn pull-right" style="margin-left:10px"
+                                            ng-click="vm.getBroadcasters(vm.selectedCluster.dns_prefix)">
+                                        <i class="fa fa-refresh"></i>
+                                    </button>
+                                    <button class="btn btn-primary pull-right" ng-click="vm.openAddBroadcasterModal()">
+                                        <i class="fa fa-plus"></i> {{'BTN_ADD'|translate}} {{'BROADCASTER'|translate}}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-scrollable clearfix">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th> #</th>
+                                        <th translate> STATUS</th>
+                                        <th translate> NAME</th>
+                                        <th translate> TUNNEL_PORT</th>
+                                        <th> SSH {{'KEY'|translate}}</th>
+                                        <th translate> CPU</th>
+                                        <th translate> RAM</th>
+                                        <th translate> VERSION</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="broadcaster in vm.selectedBroadcasters track by broadcaster.id">
+                                        <td>{{$index+1}}</td>
+                                        <td>
+                                            <i class="fa fa-circle"
+                                               zx-icon-status-class="broadcaster.generalStatus"
+                                               is-enabled="broadcaster.is_enabled">
+                                            </i>
+                                            {{(((broadcaster.state==="pending")&&(broadcaster.is_enabled))? 'PENDING' :
+                                            vm.statuses[broadcaster.generalStatus])|translate}}
+                                        </td>
+                                        <td>{{broadcaster.name}}</td>
+                                        <td>{{broadcaster.port}}</td>
+                                        <td>{{broadcaster.remote_access_key_name ? broadcaster.remote_access_key_name : 'Any'}}</td>
+                                        <td>{{broadcaster.status.cpu | number:0}}%</td>
+                                        <td>{{broadcaster.status.ram | number:0}}%</td>
+                                        <td>{{broadcaster.about.version}}</td>
+                                        <td>
+                                            <a href="{{broadcaster.configure_link}}" target="_blank" ng-if='broadcaster.state!="pending"'><i class="fa fa-eye"></i> {{'CONFIGURE'|translate}}</a>
+                                            <a href="javascript:;" ng-if='broadcaster.state=="pending"'
+                                               ng-click="vm.openBroadcasterConfigHelpModal(broadcaster)">
+                                                <i class="fa fa-info"></i>
+                                                {{'CONFIGURE'|translate}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:;"
+                                               ng-hide="broadcaster.is_enabled"
+                                               ng-click="vm.enableBroadcaster(broadcaster)">
+                                                <i class="fa fa-ban"></i>
+                                                {{'BTN_ENABLE'|translate}}
+                                            </a>
+                                            <a href="javascript:;"
+                                               ng-show="broadcaster.is_enabled"
+                                               ng-click="vm.disableBroadcaster(broadcaster)">
+                                                <i class="fa fa-ban"></i>
+                                                {{'BTN_DISABLE'|translate}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:;"
+                                               ng-click="vm.openBroadcasterHistoryModal(broadcaster)">
+                                                <i class="fa fa-line-chart"></i>
+                                                {{'HISTORY'|translate}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:;"
+                                               ng-click="vm.deleteBroadcaster(broadcaster.name, vm.selectedCluster.dns_prefix, broadcaster.port)">
+                                                <i class="fa fa-trash"></i>
+                                                {{'BTN_DELETE'|translate}}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="10" class="text-center" ng-show="!vm.selectedBroadcasters.length" translate>
+                                            NO_BROADCASTERS
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab index="2">
+                        <uib-tab-heading>
+                            <i class="fa fa-exclamation pr-10"></i> {{'EVENTS'|translate}}
+                        </uib-tab-heading>
+                        <div class="main col-md-12">
+                            <zixi-events show-pagination="true" show-controls="reload" object-type="broadcaster_cluster" object-name="{{vm.selectedCluster.name}}"></zixi-events>
+                        </div>
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+        </div>
+    </div>
+</div>

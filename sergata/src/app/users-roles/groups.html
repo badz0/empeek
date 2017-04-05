@@ -1,0 +1,186 @@
+<div class="row">
+    <div class="main col-md-12">
+        <div class="tableheader">
+            <span class="title" translate>USER_GROUPS</span>
+            <div class="pull-right">
+                <button class="btn btn-primary"
+                        ng-click="groupsVm.openAddGroupModal()">
+                    <i class="fa fa-plus"></i>{{'BTN_ADD'|translate}} {{'USER_GROUP'|translate}}
+                </button>
+                <button class="btn" style="margin-left: 8px"
+                        ng-click="groupsVm.refreshGroups()">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+            <div class="search-query">
+                <div class="input-group">
+                    <input type="text" 
+                           class="form-control"
+                           ng-model="groupsVm.searchText"
+                           placeholder="{{'SEARCH'|translate}}"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" 
+                                type="button">
+                            <span class=" glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-scrollable clearfix">
+            <table class="table table-hover selectable">
+                <thead>
+                <tr>
+                    <th> #</th>
+                    <th> {{'GROUP'|translate}} {{'NAME'|translate}}</th>
+                    <th> # {{'USERS'|translate}}</th>
+                    <th translate> BTN_DELETE</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="group in groupsVm.groups | multifilter:groupsVm.searchText:['name'] as filteredGroups"
+                    ng-class="{'select-row': groupsVm.selectedGroup.id === group.id}"
+                    ng-click="groupsVm.selectGroup(group.id)">
+                    <td>{{$index+1}}</td>
+                    <td>{{group.name}}</td>
+                    <td>{{group.users_in_group}}</td>
+                    <td><a ng-click="groupsVm.deleteGroup(group.id)"><i class="fa fa-trash"></i> {{'BTN_DELETE'|translate}}</a></td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center" ng-show="groupsVm.groups.length && !filteredGroups.length">
+                        {{'NO_RESULTS_FOUND'|translate}}...
+                    </td>
+                    <td colspan="6" class="text-center" ng-show="!groupsVm.groups.length && !filteredGroups.length">
+                        {{'NO_GROUPS'|translate}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr class="info-msg">
+<h4 class="info-msg" ng-show="!groupsVm.selectedGroup">{{'SELECT' | translate }} {{'USER_GROUP' | translate }} {{'ABOVE' | translate }}</h4>
+<div class="row info-msg"  ng-show="!groupsVm.selectedGroup" style="min-height: 250px;">
+</div>
+
+<hr class="info-details">
+
+<h4 ng-show="groupsVm.selectedGroup">{{'USER_GROUP' | translate }}: {{groupsVm.selectedGroup.name}}</h4>
+
+
+<div class="row" ng-class="{'info-details': !groupsVm.selectedGroup}">
+    <div class="col-md-12">
+        <div class="tabs-style-2">
+            <!-- Nav tabs -->
+            <uib-tabset active="active">
+                <uib-tab index="0">
+                    <uib-tab-heading>
+                        <i class="fa fa-user pr-10"></i> {{'MANAGE' | translate }} {{'USERS' | translate }}
+                    </uib-tab-heading>
+                    <div class="row">
+                        <!-- main start -->
+                        <!-- ================ -->
+                        <div class="main col-md-12">
+                            <div class="tableheader">
+                                <span class="title">&nbsp;</span>
+                                <button class="btn pull-right" style="margin-left:10px"
+                                        ng-click="groupsVm.refreshGroup(groupsVm.selectedGroup.id)">
+                                    <i class="fa fa-refresh"></i>
+                                </button>
+                                <button class="btn btn-primary pull-right"
+                                        ng-click="groupsVm.openAssignUserModal()">
+                                    <i class="fa fa-plus"></i> {{'ASSIGN' | translate }} {{'USER' | translate }}
+                                </button>
+                            </div>
+                            <div class="table-scrollable clearfix">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th> #</th>
+                                        <th translate> USER</th>
+                                        <th translate> EMAIL</th>
+                                        <th> </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="user in groupsVm.selectedGroup.user">
+                                            <td>{{$index + 1}}</td>
+                                            <td>{{user.name}}</td>
+                                            <td>{{user.email}}</td>
+                                            <td>
+                                                <a ng-click="groupsVm.removeUserFromGroup(groupsVm.selectedGroup.id, user.id, $index)">
+                                                    <i class="fa fa-trash"></i>
+                                                    {{'REMOVE'|translate}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr ng-show="groupsVm.selectedGroup.user.length === 0">
+                                            <td colspan="4" class="text-center" translate>PH_GROUPS_EMPTY </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </uib-tab>
+                <uib-tab index="2">
+                    <uib-tab-heading>
+                        <i class="fa fa-lock pr-10"></i>{{'GROUP'|translate}} {{'ROLES'|translate}}
+                    </uib-tab-heading>
+                    <div class="row">
+                        <div class="main col-md-12">
+                            <div class="tableheader">
+                                <span class="title">&nbsp;</span>
+                                <button class="btn pull-right"
+                                        style="margin-left:10px"
+                                        ng-click="groupsVm.refreshGroup(groupsVm.selectedGroup.id)">
+                                    <i class="fa fa-refresh"></i>
+                                </button>
+                            </div>
+                            <div class="table-scrollable clearfix">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th> #</th>
+                                        <th> {{'ROLE'|translate}} {{'NAME'|translate}}</th>
+                                        <th translate> ACCESS_TAG</th>
+                                        <th translate> RESOURCES</th>
+                                        <th translate> SOURCES</th>
+                                        <th translate> ADAPTIVE</th>
+                                        <th translate> DELIVERY</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="role in groupsVm.selectedGroup.roles">
+                                        <td> {{$index + 1}}</td>
+                                        <td> {{role.name}}</td>
+                                        <td> {{role.resource_tag_name}}</td>
+                                        <td>
+                                            <div icons-permissions="clusters" permissions-array="role.permissions"></div>
+                                        </td>
+                                        <td>
+                                            <div icons-permissions="sources" permissions-array="role.permissions"></div>
+                                        </td>
+                                        <td>
+                                            <div icons-permissions="adaptive_channels" permissions-array="role.permissions"></div>
+                                        </td>
+                                        <td>
+                                            <div icons-permissions="delivery_channels" permissions-array="role.permissions"></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="6" class="text-center" ng-show="!groupsVm.selectedGroup.roles.length">
+                                            {{'NO_ROLES'|translate}}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </uib-tab>
+            </uib-tabset>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+<div ng-show="showControls == 'full'" class="tableheader">
+    <br class="hidden-xs">
+    <button type="button" 
+        class="btn btn-default visible-xs-inline pull-rig" 
+        ng-init="isCollapsed = true" 
+        ng-click="isCollapsed = !isCollapsed">
+        {{isCollapsed ? 'Show' : 'Hide'}} {{'FILTERS' | translate}}
+    </button>
+    <div class="form-inline hidden-xs-soft visible-sm-plus-soft-inline" uib-collapse="isCollapsed">
+        <br class="visible-xs-inline">
+        <div class="form-group">
+            <label for="msgFilter" translate>FILTER</label>
+            <input type='text' name="msgFilter" class='form-control' ng-model="msgFilter">
+        </div>
+        <div class="form-group">
+            <label for="objectType" translate>TYPE</label>
+            <select name="objectType" class='form-control' ng-model="objectType" ng-options="type.type as type.name | translate for type in objectTypes"></select>
+        </div>
+        <div class="form-group">
+            <label for="fromDate" translate>FROM</label>
+            <input class="form-control"
+                    ng-model="fromDate"
+                    placeholder="{{'PH_SELECT_DATE'|translate}}..."
+                    min-view="year"
+                    max-view="day"
+                    start-view="month"
+                    format="L HH:00:00"
+                    moment-picker="fromDate">
+        </div>
+        <div class="form-group">
+            <label for="toDate" translate>TO</label>
+            <input class="form-control"
+                    ng-model="toDate"
+                    placeholder="{{'PH_SELECT_DATE'|translate}}..."
+                    min-view="year"
+                    max-view="day"
+                    start-view="month"
+                    format="L HH:00:00"
+                    moment-picker="toDate">
+        </div>
+        <div class="form-group">
+            <label for="pageSize" translate>COUNT</label>
+            <select name="pageSize" class='form-control' ng-model="pageSize"
+                    ng-options="count for count in [15,30,100]">
+            </select>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-sm"
+                    style="margin-left:10px"
+                    ng-click="reloadEvents()"
+                    translate>
+                BTN_APPLY
+            </button>
+        </div>
+        <div class="form-group">
+            <a 
+                    style="margin-left:10px"
+                    ng-click="clearFilter()" translate>
+                BTN_CLEAR
+            </a>
+        </div>
+    </div>
+</div>
+<div ng-show="showControls == 'reload'" class="tableheader">
+    <span class="title">&nbsp;</span>
+    <div class="pull-right">
+        <button class="btn pull-right" style="margin-left:10px"
+                ng-click="reloadEvents()">
+            <i class="fa fa-refresh"></i>
+        </button>
+    </div>
+</div>
+<div class="table-scrollable clearfix">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th translate> TYPE</th>
+            <th> {{'DATE' | translate}}/{{'TIME' | translate}}</th>
+            <th translate> MESSAGE</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="event in events | limitTo:currentPageSize:(page-1)*currentPageSize as pageEvents">
+            <td><i class="fa fa-circle" zx-icon-status-class="event.event_type" ></i>
+                {{event.object_type | desnake}}
+            </td>
+            <td>{{event.event_date | date : 'medium'}}
+            </td>
+            <td ng-bind-html="event.message"></td>
+        </tr>
+        <tr ng-if="events == null">
+            <td colspan="3" class="text-center">{{'LOADING' | translate}}...</td>
+        </tr>
+        <tr ng-if="events && events.length === 0">
+            <td colspan="3" class="text-center" translate>NO_EVENTS</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-show="showPagination" class='text-center'>
+    <a ng-if="maxPage > 1" style="margin-left:10px" ng-click="setPage(1)" translate>
+        FIRST
+    </a>
+    <span ng-repeat="offest in pagesRange">
+        <a ng-if="(page+offest>=1) && (page+offest<=maxPage) && (page+offest!=page)" style="margin-left:10px" ng-click="setPage(page+offest)">
+            {{page+offest}}
+        </a>
+        <span style="margin-left:10px; font-weight: bold;" ng-if="page+offest==page">{{page}}</span>
+    </span>
+    <a style="margin-left:10px" ng-click="nextPage()" translate>
+        NEXT
+    </a>
+</div>

@@ -1,0 +1,124 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="addClusterVm.closeModal()">
+        <span>×</span>
+    </button>
+    <h4 class="modal-title" translate>BROADCASTERS_CLUSTER</h4>
+</div>
+<form name="addClusterForm" ng-submit="addClusterForm.$valid && addClusterVm.saveCluster()" novalidate>
+    <div class="modal-body">
+        <div class="form-group" ng-class="{'has-error': addClusterForm.$submitted && addClusterForm.name.$error.required}">
+            <label class="control-label" translate>CLUSTER_NAME</label>
+            <input type="text" class="form-control" name="name" id="cluster-name"
+                   ng-model="addClusterVm.name"
+                   translate-attr-placeholder="CLUSTER_NAME"
+                   translate
+                   required/>
+            <div class="help-block" ng-show="addClusterForm.$submitted">
+                <span ng-show="addClusterForm.name.$error.required">{{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': addClusterForm.$submitted && addClusterForm.resourceTag.$error.required}">
+            <label class="control-label" translate>ACCESS_TAG</label>
+            <select class="form-control"
+                    name="resourceTag"
+                    ng-model="addClusterVm.resource_tag_id"
+                    ng-options="resourceTag.id as resourceTag.name for resourceTag in addClusterVm.resourceTags"
+                    ng-class="{'select-placeholder': !addClusterVm.resource_tag_id}"
+                    required>
+                <option value="" disabled selected>{{'SELECT'|translate}} {{'ACCESS_TAG'| translate}}</option>
+            </select>
+            <div class="help-block" ng-show="addClusterForm.$submitted">
+                <span ng-show="addClusterForm.resourceTag.$error.required">{{'ACCESS_TAG'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+            </div>
+        </div>
+        <div class="form-group form-group-inline" id="dns-prefix" ng-class="{'has-error': addClusterForm.$submitted && (addClusterForm.dns_prefix.$error.required || addClusterForm.dns_prefix.$error.pattern || addClusterForm.dns_prefix.$error.blacklist)}">
+            <label class="control-label" translate>DNS_PREFIX</label>
+            <input type="text" class="form-control" style="width: 200px;"
+                   name="dns_prefix"
+                   ng-model="addClusterVm.dns_prefix"
+                   ng-pattern="addClusterVm.namePattern"
+                   translate-attr-placeholder="DNS_PREFIX"
+                   translate
+                   ui-validate="{blacklist : '$value != \'feeder\' '}"
+                   required/>.{{addClusterVm.customer_dns_prefix}}{{addClusterVm.application_host}}
+            <div class="help-block" ng-show="addClusterForm.$submitted">
+                <span ng-show="addClusterForm.dns_prefix.$error.required">{{'DNS_PREFIX'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                <span ng-show="addClusterForm.dns_prefix.$error.pattern" translate>PH_DNS_PREFIX_LOWERCASE</span>
+                <span ng-show="addClusterForm.dns_prefix.$error.blacklist" translate>PH_DNS_PREFIX_EQUAL_FEEDER</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">{{'CLUSTER'|translate}} {{'TYPE'| translate}}</label>
+            <div>
+                <label class="control-label">
+                    <input type="checkbox" ng-model="addClusterVm.can_input" jq-uniform ng-true-value="1" ng-false-value="0"/>
+                    {{'INPUT'|translate}}
+                </label>
+                <label class="control-label">
+                    <input type="checkbox" ng-model="addClusterVm.can_output" jq-uniform ng-true-value="1" ng-false-value="0"/>
+                   {{'OUTPUT'|translate}}
+                </label>
+                <label class="control-label">
+                    <input type="checkbox" ng-model="addClusterVm.can_process" jq-uniform ng-true-value="1" ng-false-value="0"/>
+                   {{'PROCESSING'|translate}}
+                </label>
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': addClusterForm.$submitted && addClusterForm.scalingType.$error.required}">
+            <label class="control-label">{{'SCALING'|translate}} {{'TYPE'|translate}}</label>
+            <select class="form-control" id="autoscale" name="scalingType"
+                    ng-model="addClusterVm.scaling"
+                    ng-change="addClusterVm.setScalingBoolean(addClusterVm.scaling.groupName === 'AWS'); addClusterVm.getVpcList(addClusterVm.scaling.region)"
+                    ng-options="scalingType as scalingType.name group by scalingType.groupName for scalingType in addClusterVm.scalingTypes"
+                    ng-class="{'select-placeholder': !addClusterVm.scaling}"
+                    required>
+                <option value="" disabled selected>{{'SELECT'|translate}} {{'SCALING'|translate}} {{'TYPE'|translate}}</option>
+            </select>
+            <div class="help-block" ng-show="addClusterForm.$submitted">
+                <span ng-show="addClusterForm.scalingType.$error.required">{{'SCALING'|translate}} {{'TYPE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+            </div>
+        </div>
+        <div class="form-group" ng-hide="!addClusterVm.scaling.groupName">
+            <label class="control-label">VPC</label>
+            <select class="form-control"
+                    ng-model="addClusterVm.vpc"
+                    ng-change="addClusterVm.getSubnetList(addClusterVm.vpc)"
+                    ng-options="vpc.key as vpc.name for vpc in addClusterVm.vpcList"
+                    ng-class="{'select-placeholder': !addClusterVm.vpc}"
+                    ng-init="addClusterVm.vpc = addClusterVm.vpcList[0].name">
+                <option value="" disabled selected>{{'SELECT'|translate}} VPC</option>
+            </select>
+        </div>
+        <div class="form-group" ng-hide="!addClusterVm.scaling.groupName">
+            <label class="control-label" translate>SUBNET</label>
+            <select class="form-control"
+                    ng-model="addClusterVm.subnet"
+                    ng-options="key as value for (key , value) in addClusterVm.subnetList"
+                    ng-class="{'select-placeholder': !addClusterVm.subnet}"
+                    >
+                <option value="" disabled selected>{{'SELECT'|translate}} {{'SUBNET'|translate}}</option>
+            </select>
+        </div>
+        <div class="form-group form-group-inline" ng-hide="!addClusterVm.scaling.groupName">
+            <div class="row">
+                <div class="form-group col-xs-6">
+                    <label class="control-label" translate>MIN_SIZE</label>
+                    <input type="number" min=1 class="form-control" value="1"
+                           ng-model="addClusterVm.min_size"
+                           translate
+                           translate-attr-placeholder="MIN_SIZE"/>
+                </div>
+                <div class="form-group col-xs-6">
+                    <label class="control-label" translate>MAX_SIZE</label>
+                    <input type="number" min=1 class="form-control" value="1" ng-model="addClusterVm.max_size"
+                           translate
+                           translate-attr-placeholder="MAX_SIZE"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" type="button" ng-click="addClusterVm.closeModal()" translate>BTN_CLOSE</button>
+        <button class="btn btn-primary" type="submit" translate>BTN_SAVE</button>
+    </div>
+</form>

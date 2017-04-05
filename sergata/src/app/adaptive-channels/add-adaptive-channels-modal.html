@@ -1,0 +1,550 @@
+<div class="modal-header">
+    <button type="button"
+            class="close"
+            ng-click="addVm.closeModal()"
+            aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h4 class="modal-title">{{'ADAPTIVE_CHANNEL' | translate }}</h4>
+</div>
+<form name="FormAdaptiveChannel"
+      ng-show="addVm.currentStep === 0"
+      ng-submit="FormAdaptiveChannel.$valid && addVm.addModeProperty() && addVm.setCurrentStep()"
+      novalidate ng-cloak>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group"
+                     ng-class="{'has-error' : FormAdaptiveChannel.$submitted && FormAdaptiveChannel.name.$error.required}">
+                    <label class="control-label" translate>CHANNEL_NAME</label>
+                    <input type="text"
+                           name="name"
+                           translate
+                           translate-attr-placeholder="CHANNEL_NAME"
+                           class="form-control"
+                           ng-model="addVm.name"
+                           required/>
+                    <div class="help-block" ng-show="FormAdaptiveChannel.$submitted">
+                        <span ng-show="FormAdaptiveChannel.name.$error.required">
+                            {{'CHANNEL_NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group"
+                     ng-class="{'has-error' : FormAdaptiveChannel.$submitted && FormAdaptiveChannel.tag.$error.required}">
+                    <label class="control-label" translate>ACCESS_TAG</label>
+                    <select class="form-control"
+                            name="tag"
+                            ng-model="addVm.resource_tag_id"
+                            ng-class="{'select-placeholder': !addVm.resource_tag_id}"
+                            ng-options="item.id as item.name for item in addVm.resourceTags"
+                            required>
+                        <option value="" disabled selected>{{'SELECT'|translate}} {{'ACCESS_TAG'| translate}}</option>
+                    </select>
+                    <div class="help-block" ng-show="FormAdaptiveChannel.$submitted">
+                        <span ng-show="FormAdaptiveChannel.tag.$error.required">
+                            {{'ACCESS_TAG'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group"
+                     ng-class="{'has-error' : FormAdaptiveChannel.$submitted && FormAdaptiveChannel.pcluster.$error.required}">
+                    <label class="control-label">{{'PROCESSING'|translate}} {{'CLUSTER'|translate}}</label>
+                    <select class="form-control"
+                            name="pcluster"
+                            ng-model="addVm.broadcaster_cluster_id"
+                            ng-class="{'select-placeholder': !addVm.broadcaster_cluster_id}"
+                            ng-options="item.id as item.name for item in addVm.clusters"
+                            required>
+                        <option value="" disabled selected>
+                            {{'SELECT'|translate}} {{'PROCESSING'|translate}} {{'CLUSTER'|translate}}
+                        </option>
+                    </select>
+                    <div class="help-block" ng-show="FormAdaptiveChannel.$submitted">
+                        <span ng-show="FormAdaptiveChannel.pcluster.$error.required">
+                            {{'PROCESSING'|translate}} {{'CLUSTER'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                        </span>
+                    </div>
+                </div>
+            <!--    <div class="form-group"
+                     ng-class="{'has-error' : FormAdaptiveChannel.$submitted && FormAdaptiveChannel.oCluster.$error.required}">
+                    <label class="control-label">Public Output Cluster</label>
+                    <select class="form-control"
+                            name="oCluster"
+                            ng-model="addVm.output_broadcaster_cluster_id"
+                            ng-class="{'select-placeholder': !addVm.output_broadcaster_cluster_id}"
+                            ng-options="item.id as item.name for item in addVm.public_clusters">
+                        <option value="">None (Feature disabled)</option>
+                    </select>
+                    <div class="help-block" ng-show="FormAdaptiveChannel.$submitted">
+                        <span ng-show="FormAdaptiveChannel.oCluster.$error.required">Public Output Cluster cannot be empty</span>
+                    </div>
+                </div>-->
+                <div class="form-group"
+                     ng-class="{'has-error' : FormAdaptiveChannel.$submitted && FormAdaptiveChannel.mode.$error.required}">
+                    <label class="control-label" translate>MODE</label>
+                    <select class="form-control"
+                            name="mode"
+                            id="mode-selection"
+                            ng-model="addVm.is_transcoding"
+                            ng-class="{'select-placeholder': addVm.is_transcoding === null}"
+                            ng-options="item.transcoding as item.name | translate for item in addVm.channelsProperty.mode"
+                            required>{{addVm.is_transcoding}}
+                        <option value="" disabled
+                                selected translate>SELECT_MODE</option>
+                    </select>
+                    <div class="help-block" ng-show="FormAdaptiveChannel.$submitted">
+                        <span ng-show="FormAdaptiveChannel.mode.$error.required">
+                            {{'MODE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" ng-hide="addVm.currentStep === 1">
+        <button class="btn btn-default"
+                type="button"
+                ng-click="addVm.closeModal()"
+                translate>
+            BTN_CANCEL
+        </button>
+        <button type="submit" class="btn btn-primary"
+                ng-hide="addVm.currentStep === 1" translate>
+            BTN_CONTINUE
+        </button>
+    </div>
+</form>
+<form name="FormAddSources"
+      ng-show="addVm.currentStep === 1"
+      ng-submit="FormAddSources.$valid && addVm.saveChannel()&& addVm.emptyBitrates;" novalidate>
+    <div class="modal-body step step-2">
+        <div class="row" ng-if="addVm.is_transcoding">
+            <div class="col-md-8 col-sm-8">
+                <div class="form-group"
+                     ng-class="{'has-error' : FormAddSources.$submitted && FormAddSources.source_id.$error.required}">
+                    <label class="control-label" translate>SOURCE</label>
+                    <select class="form-control"
+                            name="source_id"
+                            ng-model="addVm.source_id"
+                            ng-options="item.id as item.name for item in addVm.sources"
+                            ng-class="{'select-placeholder': !addVm.source_id}"
+                            ng-required="addVm.is_source_included">
+                        <option value="" disabled selected>{{'SELECT'|translate}} {{'SOURCE'| translate}}</option>
+                    </select>
+                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                        <span ng-show="FormAddSources.source_id.$error.required">
+                            {{'SOURCE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                    <label class="control-label">
+                    </label>
+                    <div class="checkbox">
+                        <label class="control-label">
+                            <input type="checkbox"
+                                   jq-uniform
+                                   ng-model="addVm.is_source_included"/>
+                            {{'INCLUDE'|translate}} {{'SOURCE'| translate}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12" ng-if="!addVm.is_transcoding">
+                <label class="control-label" translate>SOURCES</label>
+                <div class="table-scrollable">
+                    <table class="table table-compact" id="transcoded-bitrates">
+                        <thead>
+                        <tr>
+                            <th translate>NAME</th>
+                            <th>{{'BITRATE'|translate}} [kbps]</th>
+                            <th translate>SOURCE</th>
+                            <th>
+                                <button type="button"
+                                        class="btn btn-xs btn-primary add-table-row"
+                                        ng-click="addVm.addProperty();">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="template" ng-repeat="itemSource in addVm.bitrates">
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && FormAddSources['addTag'+$index].$error.required}">
+                                    <input type="text"
+                                           translate
+                                           translate-attr-placeholder="NAME"
+                                           name="addTag{{$index}}"
+                                           class="form-control"
+                                           ng-model="itemSource.name"
+                                           required/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources['addTag'+$index].$error.required">
+                                            {{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && (FormAddSources['addBitrate'+$index].$error.required || FormAddSources['addBitrate'+$index].$error.pattern)}">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="addBitrate{{$index}}"
+                                           placeholder="Bitrate [kbps]"
+                                           ng-pattern="addVm.numberPattern"
+                                           ng-model="itemSource.kbps"
+                                           required/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources['addBitrate'+$index].$error.pattern || FormAddSources['addBitrate'+$index].$error.required"
+                                              translate>INVALID_NUMBER</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && FormAddSources['addSourceItemSource'+$index].$error.required}">
+                                    <select class="form-control"
+                                            name="addSourceItemSource{{$index}}"
+                                            ng-model="itemSource.source_id"
+                                            ng-options="item.id as item.name for item in addVm.sources"
+                                            ng-init="(itemSource.source_id)?itemSource.source_id:itemSource.source_id=addVm.sources[0].id"
+                                            required>
+                                    </select>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources['addSourceItemSource'+$index].$error.required">
+                                            {{'SOURCE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-xs" ng-click="addVm.deleteProperty(itemSource);">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="template" ng-if="!addVm.showAdd">
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && FormAddSources.addTag.$error.required}">
+                                    <input type="text"
+                                           name="addTag"
+                                           translate
+                                           translate-attr-placeholder="NAME"
+                                           class="form-control"
+                                           ng-model="addVm.itemsSources.name"
+                                           required/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addTag.$error.required">
+                                            {{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && (FormAddSources.addBitrate.$error.required || FormAddSources.addBitrate.$error.pattern)}">
+                                    <input type="text"
+                                           class="form-control"
+                                           translate
+                                           translate-attr-placeholder="BITRATE_KBPS"
+                                           name="addBitrate"
+                                           ng-pattern="addVm.numberPattern"
+                                           ng-model="addVm.itemsSources.kbps"
+                                           required/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addBitrate.$error.pattern || FormAddSources.addBitrate.$error.required"
+                                              translate>INVALID_NUMBER</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && FormAddSources.addSource.$error.required}">
+                                    <select class="form-control"
+                                            name="addSource"
+                                            ng-model="addVm.itemsSources.source_id"
+                                            ng-options="item.id as item.name for item in addVm.sources"
+                                            ng-class="{'select-placeholder': !addVm.itemsSources.source_id}"
+                                            required>
+                                        <option value="" disabled selected>{{'SELECT'|translate}} {{'SOURCE'| translate}}</option>
+                                    </select>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addSource.$error.required">{{'SOURCE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-xs"
+                                        ng-click="addVm.deleteAllProperty();">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <!--<tr ng-show="!addVm.itemsSources.source_id && addVm.bitrates.length===0">-->
+                        <!--<td colspan="4">-->
+                        <!--<div class="form-group has-error">-->
+                        <!--<div class="help-block text-center" ng-show="!addVm.itemsSources.source_id">-->
+                        <!--<label ng-show="!addVm.itemsSources.source_id">Please add bitrate </label>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</td>-->
+                        <!--</tr>-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12" ng-if="addVm.is_transcoding">
+                <label class="control-label" translate>BITRATES</label>
+                <div class="table-scrollable">
+                    <table class="table table-compact">
+                        <thead>
+                        <tr>
+                            <th translate>NAME</th>
+                            <th translate>BITRATE_KBPS</th>
+                            <th translate>RESOLUTION</th>
+                            <th>
+                                <button type="button"
+                                        class="btn btn-xs btn-primary add-table-row"
+                                        ng-click="addVm.addProperty();">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="template" ng-if="addVm.is_source_included&&addVm.is_transcoding">
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && FormAddSources.addTagBititemSource.$error.required}">
+                                    <input type="text"
+                                           name="addTagBititemSource"
+                                           class="form-control"
+                                           translate
+                                           translate-attr-placeholder="NAME"
+                                           required
+                                           ng-model="addVm.bititemSource.name"/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addTagBititemSource.$error.required">{{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && (FormAddSources.addBitrateBititemSource.$error.required || FormAddSources.addBitrateBititemSource.$error.pattern)}">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="addBitrateBititemSource"
+                                           translate
+                                           translate-attr-placeholder="BITRATE_KBPS"
+                                           required
+                                           ng-model="addVm.bititemSource.kbps"/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addBitrateBititemSource.$error.pattern || FormAddSources.addBitrateBititemSource.$error.required"
+                                              translate>
+                                            INVALID_NUMBER</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <span translate>SOURCE</span>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-xs"
+                                        disabled>
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="template" ng-repeat="bititem in addVm.bitrates">
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && FormAddSources['addTagBititem'+$index].$error.required}">
+                                    <input type="text"
+                                           name="addTagBititem{{$index}}"
+                                           class="form-control"
+                                           translate
+                                           translate-attr-placeholder="NAME"
+                                           required
+                                           ng-model="bititem.name"/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources['addTagBititem'+$index].$error.required">
+                                            {{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && (FormAddSources['addBitrateBititem'+$index].$error.required || FormAddSources['addBitrateBititem'+$index].$error.pattern)}">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="addBitrateBititem{{$index}}"
+                                           translate
+                                           translate-attr-placeholder="BITRATE_KBPS"
+                                           required
+                                           ng-model="bititem.kbps"/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources['addBitrateBititem'+$index].$error.pattern || FormAddSources['addBitrateBititem'+$index].$error.required"
+                                        translate>INVALID_NUMBER</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && (FormAddSources['addBitrateProfileId'+$index].$error.required)}">
+                                    <select class="form-control"
+                                            name="addBitrateProfileId{{$index}}"
+                                            ng-model="bititem.profile_id"
+                                            ng-class="{'select-placeholder': !bititem.profile_id}"
+                                            ng-options="item.id as item.profile for item in addVm.profiles"
+                                            required>
+                                        <option value="" disabled selected>{{'PROFILE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</option>
+                                    </select>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources['addBitrateProfileId'+$index].$error.required">{{'PROFILE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-xs"
+                                        ng-click="addVm.deleteProperty(bititem);">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="!addVm.showAdd">
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && FormAddSources.addTagBititem.$error.required}">
+                                    <input type="text"
+                                           name="addTagBititem"
+                                           translate-attr-placeholder="NAME"
+                                           translate
+                                           class="form-control"
+                                           ng-model="addVm.itemsBitrates.name"
+                                           required/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addTagBititem.$error.required">{{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && (FormAddSources.addBitrateBititem.$error.required || FormAddSources.addBitrateBititem.$error.pattern)}">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="addBitrateBititem"
+                                           translate
+                                           translate-attr-placeholder="BITRATE_KBPS"
+                                           ng-pattern="addVm.numberPattern"
+                                           ng-model="addVm.itemsBitrates.kbps"
+                                           required/>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addBitrateBititem.$error.pattern || FormAddSources.addBitrateBititem.$error.required"
+                                        translate>INVALID_NUMBER</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"
+                                     ng-class="{'has-error': FormAddSources.$submitted && (FormAddSources.addBitrateProfile.$error.required)}">
+                                    <select class="form-control"
+                                            name="addBitrateProfile"
+                                            ng-model="addVm.itemsBitrates.profile_id"
+                                            ng-class="{'select-placeholder': !bititem.profile_id}"
+                                            ng-options="item.id as item.profile for item in addVm.profiles"
+                                            required>
+                                        <option value="" disabled selected>{{'SELECT'|translate}} {{'PROFILE'| translate}}</option>
+                                    </select>
+                                    <div class="help-block" ng-show="FormAddSources.$submitted">
+                                        <span ng-show="FormAddSources.addBitrateProfile.$error.required">{{'PROFILE'|translate}} {{'CANNOT_BE_EMPTY'| translate}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-xs" ng-click="addVm.deleteAllProperty();">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <!--<tr ng-show="!addVm.itemsBitrates.profile_id && addVm.bitrates.length===0">-->
+                        <!--<td colspan="4">-->
+                        <!--<div class="form-group has-error">-->
+                        <!--<div class="help-block text-center" ng-show="!addVm.itemsBitrates.profile_id">-->
+                        <!--<label ng-show="!addVm.itemsBitrates.profile_id">Please add bitrate </label>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</td>-->
+                        <!--</tr>-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" translate>
+                MANIFEST_TYPE
+            </label>
+            <br>
+            <label class="checkbox-inline">
+                <input type="checkbox"
+                       jq-uniform
+                       id="inlineCheckbox11"
+                       ng-model="addVm.is_HLS">
+                HLS
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"
+                       jq-uniform
+                       id="inlineCheckbox12"
+                       ng-model="addVm.is_MPEG_DASH">
+                MPEG-DASH
+            </label>
+        </div>
+    <!--    <div class="form-group">
+            <label class="control-label">
+                Media Segment Format
+            </label>
+            <br>
+            <label class="checkbox-inline">
+                <input type="checkbox"
+                       jq-uniform
+                       id="inlineCheckbox21"
+                       ng-model="addVm.is_TS">
+                TS
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox"
+                       jq-uniform
+                       ng-model="addVm.is_MP4">
+                MP4
+            </label>
+        </div> -->
+    </div>
+    <div class="modal-footer" ng-show="addVm.currentStep === 1">
+        <button type="button"
+                class="btn btn-primary"
+                ng-click="addVm.setCurrentStep();"
+                ng-show="addVm.currentStep === 1" translate>
+            BTN_BACK
+        </button>
+        <button type="submit"
+                class="btn btn-primary"
+                ng-if="addVm.currentStep" translate>
+            BTN_SAVE
+        </button>
+    </div>
+</form>

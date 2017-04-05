@@ -1,0 +1,284 @@
+<div class="row">
+    <div class="main col-md-12">
+        <div class="tableheader"><span class="title" translate>USERS</span>
+            <div class="pull-right">
+                <button class="btn btn-primary"
+                        ng-click="usersVm.openAddUserModal()">
+                    <i class="fa fa-plus"></i> {{'BTN_ADD'|translate}} {{'USER'|translate}}
+                </button>
+                <button class="btn" style="margin-left: 8px"
+                        ng-click="usersVm.getUsers()">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+            <div class="search-query">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           ng-model="usersVm.searchUser"
+                           translate
+                           translate-attr-placeholder="SEARCH"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" 
+                                type="button">
+                            <span class=" glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-scrollable clearfix">
+            <table class="table table-hover selectable" id="usertable">
+                <thead>
+                <tr>
+                    <th> #</th>
+                    <th translate> NAME</th>
+                    <th translate> EMAIL</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="user in usersVm.users | multifilter:usersVm.searchUser:['name', 'email'] as filteredUsers"
+                    ng-class="{'select-row': user.id === usersVm.selectedUser.id}"
+                    ng-click="usersVm.selectUser(user);">
+                    <td> {{$index+1}}</td>
+                    <td> {{user.name}}</td>
+                    <td> {{user.email}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-center" ng-show="usersVm.users.length && !filteredUsers.length">
+                        {{'NO_RESULTS_FOUND'|translate}}...
+                    </td>
+                    <td colspan="3" class="text-center" ng-show="!usersVm.users.length && !filteredUsers.length">
+                        {{'NO_USERS'|translate}}...
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div ng-hide="usersVm.selectedUser">
+    <hr class="info-msg">
+    <h4 class="info-msg">{{'SELECT' | translate }} {{'USER' | translate }} {{'ABOVE' | translate }}</h4>
+    <div class="row info-msg" style="min-height: 250px;">
+    </div>
+</div>
+<hr ng-class="{'info-details': !usersVm.selectedUser}">
+
+<h4 ng-class="{'info-details': !usersVm.selectedUser}">{{'USER' | translate }}: {{usersVm.selectedUser.name}}</h4>
+
+<uib-tabset active="active" ng-if="usersVm.selectedUser">
+    <uib-tab index="0">
+        <uib-tab-heading>
+            <i class="fa  fa-list-ul pr-10"></i>
+            <span class="hidden-xs" translate>DETAILS</span>
+            <span class="visible-xs-inline" ng-show="active==0" translate>DETAILS</span>
+        </uib-tab-heading>
+        <form name="editingUserForm" ng-submit="editingUserForm.$valid && usersVm.saveEditingUser()"
+              novalidate>
+            <div class="tableheader">
+                <span class="title">&nbsp;</span>
+                <div class="pull-right">
+                    <button class="btn btn-primary edit-alt"
+                            type="button"
+                            ng-hide="usersVm.showEditing"
+                            ng-click="usersVm.editUser()"
+                            translate>
+                        BTN_EDIT
+                    </button>
+                    <button class="btn btn-danger edit-alt"
+                            ng-hide="usersVm.showEditing"
+                            type="button"
+                            ng-click="usersVm.deleteUser()"
+                            translate>
+                        BTN_DELETE
+                    </button>
+                    <button class="btn btn-primary edit"
+                            ng-show="usersVm.showEditing"
+                            type="submit"
+                            translate>
+                        BTN_SAVE
+                    </button>
+                    <button class="btn edit"
+                            ng-show="usersVm.showEditing"
+                            type="button"
+                            ng-click="usersVm.cancelEditing()"
+                            translate>
+                        BTN_CANCEL
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <div class="form-horizontal form-condensed">
+                        <div class="form-group" ng-class="{'has-error': usersVm.showEditing && editingUserForm.$submitted && editingUserForm.name.$error.required}">
+                            <label class="col-xs-4 control-label" translate>NAME</label>
+                            <div class="col-xs-8">
+                                <p class="form-control-static edit-alt"
+                                   ng-hide="usersVm.showEditing">
+                                    {{usersVm.selectedUser.name}}
+                                </p>
+                                <input type="text"
+                                       name="name"
+                                       class="form-control input-inline input-medium edit"
+                                       ng-model="usersVm.editingUser.name"
+                                       ng-show="usersVm.showEditing"
+                                       required>
+                                <div class="help-block" ng-show="editingUserForm.$submitted">
+                                    <span ng-show="usersVm.showEditing && editingUserForm.name.$error.required">
+                                        {{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-4 control-label" translate>EMAIL</label>
+                            <div class="col-xs-8">
+                                <p class="form-control-static">{{usersVm.selectedUser.email}}</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group edit" ng-show="usersVm.showEditing">
+                            <label class="col-xs-4 control-label" translate>PASSWORD</label>
+                            <div class="col-xs-8">
+                                <input type="password"
+                                       name="password"
+                                       class="form-control input-inline input-medium edit"
+                                       ng-model="usersVm.editingUser.password"
+                                       placeholder="{{'USE_CURRENT'|translate}}">
+                            </div>
+                        </div>
+                        <div class="form-group edit" ng-show="usersVm.showEditing" ng-class="{'has-error': usersVm.showEditing && editingUserForm.$submitted && editingUserForm.confirmpw.$error.zxVerifPassword}">
+                            <label class="hidden-xs col-xs-4 control-label">{{'CONFIRM'|translate}} {{'PASSWORD'|translate}}</label>
+                            <label class="visible-xs-inline col-xs-4 control-label">{{'CONFIRM'|translate}} {{'PASSWORD_ABR'|translate}}</label>
+                            <div class="col-xs-8">
+                                <input type="password"
+                                       name="confirmpw"
+                                       class="form-control input-inline input-medium edit"
+                                       ng-model="usersVm.editingUser.confirm_password"
+                                       zx-verif-password="usersVm.editingUser.password"
+                                       placeholder="{{'USE_CURRENT'|translate}}">
+                                <div class="help-block" ng-show="editingUserForm.$submitted">
+                                    <span ng-show="usersVm.showEditing && editingUserForm.confirmpw.$error.zxVerifPassword" translate>PH_PASSWORD</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </uib-tab>
+    <uib-tab index="1">
+        <uib-tab-heading>
+            <i class="fa fa-users pr-10"></i> 
+            <span class="hidden-xs">{{'MANAGE'|translate}} {{'GROUPS'|translate}}</span>
+            <span class="visible-xs-inline" ng-show="active==1">{{'MANAGE'|translate}} {{'GROUPS'|translate}}</span>
+        </uib-tab-heading>
+        <div class="row">
+            <!-- main start -->
+            <!-- ================ -->
+            <div class="main col-md-12">
+                <div class="tableheader">
+                    <span class="title">&nbsp;</span>
+                    <button class="btn pull-right"
+                            style="margin-left:10px"
+                            ng-click="usersVm.getDetails(usersVm.selectedUser.id)">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                    <button class="btn btn-primary pull-right"
+                            ng-click="usersVm.openAssignUserModal()">
+                        <i class="fa fa-plus"></i>
+                        {{'BTN_ASSIGN' | translate}} {{'GROUP' | translate}}
+                    </button>
+                </div>
+                <div class="table-scrollable clearfix">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th> #</th>
+                                <th> {{'GROUP' | translate}} {{'NAME' | translate}}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="group in usersVm.groups | filter:usersVm.filterGroup">
+                                <td> {{$index+1}}</td>
+                                <td>{{group.name}}</td>
+                                <td><a href="javascript:;"
+                                       ng-click="usersVm.removeUserFromGroups(group.id)">
+                                    <i class="fa fa-trash"></i>
+                                    {{'REMOVE' | translate}}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr ng-show="usersVm.selectedUser.groups.length === 0">
+                                 <td colspan="4" class="text-center" translate>PH_USER_NOT_ASSIGN</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab index="2">
+        <uib-tab-heading>
+            <i class="fa fa-lock pr-10"></i> 
+            <span class="hidden-xs">{{'USER' | translate}} {{'ROLES' | translate}}</span>
+            <span class="visible-xs-inline" ng-show="active==2">{{'USER' | translate}} {{'ROLES' | translate}}</span>
+        </uib-tab-heading>
+        <div class="row">
+            <div class="main col-md-12">
+                <div class="tableheader">
+                    <span class="title">&nbsp;</span>
+                    <button class="btn pull-right"
+                            style="margin-left:10px"
+                            ng-click="usersVm.getDetails(usersVm.selectedUser.id)">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+                <div class="table-scrollable clearfix">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th> #</th>
+                            <th> {{'ROLE'|translate}} {{'NAME'|translate}}</th>
+                            <th translate> ACCESS_TAG</th>
+                            <th translate> VIA</th>
+                            <th translate> RESOURCES</th>
+                            <th translate> SOURCES</th>
+                            <th translate> ADAPTIVE</th>
+                            <th translate> DELIVERY</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="role in usersVm.selectedUser.combined_roles">
+                            <td>{{$index + 1}}</td>
+                            <td>{{role.name}}</td>
+                            <td>{{role.resource_tag_name}}</td>
+                            <td>{{role.via?role.via:'User'}}</td>
+                            <td>
+                                <div icons-permissions="clusters" permissions-array="role.permissions"></div>
+                            </td>
+                            <td>
+                                <div icons-permissions="sources" permissions-array="role.permissions"></div>
+                            </td>
+                            <td>
+                                <div icons-permissions="adaptive_channels" permissions-array="role.permissions"></div>
+                            </td>
+                            <td>
+                                <div icons-permissions="delivery_channels" permissions-array="role.permissions"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-center" ng-show="!usersVm.selectedUser.combined_roles.length">
+                                {{'NO_ROLES'|translate}}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+</uib-tabset>
+

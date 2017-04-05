@@ -1,0 +1,82 @@
+<style>
+    .page-header,
+    .page-sidebar-wrapper,
+    .copyright-v2,
+    .go2top {
+        display: none !important;
+    }
+
+    .page-content.page-content-popup {
+        background: none !important;
+    }
+
+    .page-content .page-fixed-main-content {
+        margin-left: 0px !important;
+    }
+
+    .select-Lang > select {
+        color: white;
+        position: absolute;
+        top: 16px;
+        right: 44px;
+        background: inherit;
+    }
+
+    .opt-lang option {
+        color: white;
+        background: black;
+    }
+</style>
+
+<div class="login">
+    <div class="logo">
+        <img src="/images/zixi-white.svg" alt="Zixi">
+        <p>
+            Live Linear Streaming
+        </p>
+    </div>
+
+    <div class="content" ng-app="app" ng-controller="LoginController as vm">
+        <!-- BEGIN LOGIN FORM -->
+        <form name="LoginForm" class="login-form" novalidate ng-submit="LoginForm.$valid && vm.login(vm.credentials)">
+            <h3 class="form-title font-green" translate>SIGN_IN</h3>
+            <div class="alert alert-danger" ng-show="LoginForm.$submitted && LoginForm.$invalid">
+                <!--<button class="close" data-close="alert"></button>-->
+                <span ng-show="LoginForm.username.$error.required || LoginForm.password.$error.required" translate> PH_PASSWORD_LOGIN </span>
+            </div>
+            <div class="alert alert-danger text-center" ng-show="LoginForm.$submitted && vm.error">
+                <!--<button class="close" data-close="alert"></button>-->
+                <span ng-show="vm.error" translate> INVALID_CREDENTIALS </span>
+            </div>
+            <div class="form-group">
+                <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                <label class="control-label visible-ie8 visible-ie9" translate>EMAIL</label>
+                <input id="email"
+                       class="form-control form-control-solid placeholder-no-fix"
+                       type="text"
+                       autocomplete="off"
+                       placeholder="{{'EMAIL' | translate}}"
+                       name="username"
+                       ng-model="vm.credentials.email"
+                       required>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9" translate>PASSWORD</label>
+                <input id="password"
+                       class="form-control form-control-solid placeholder-no-fix"
+                       type="password"
+                       autocomplete="off"
+                       placeholder="{{'PASSWORD' | translate}}"
+                       name="password"
+                       ng-model="vm.credentials.password"
+                       required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary uppercase" id="login_btn" translate>LOGIN</button>
+            </div>
+        </form>
+        <!-- END LOGIN FORM -->
+    </div>
+
+
+</div>

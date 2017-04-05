@@ -1,0 +1,316 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="tableheader"><span class="title" translate>ROLES</span>
+            <div class="pull-right">
+                <button class="btn btn-primary"
+                        ng-click="rolesVm.openAddRoleModal()">
+                    <i class="fa fa-plus"></i> {{'BTN_ADD'|translate}} {{'ROLE'|translate}}
+                </button>
+                <button class="btn" style="margin-left: 8px"
+                        ng-click="rolesVm.refreshRoles()">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+            <div class="search-query">
+                <div class="input-group">
+                    <input type="text" 
+                           class="form-control" 
+                           ng-model="rolesVm.searchTerm"
+                           placeholder="{{'SEARCH'|translate}}"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" 
+                                type="button">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-scrollable clearfix">
+            <table class="table table-hover selectable">
+                <thead>
+                <tr>
+                    <th> #</th>
+                    <th> {{'ROLE'|translate}} {{'NAME'|translate}}</th>
+                    <th translate> ACCESS_TAG</th>
+                    <th translate> RESOURCES</th>
+                    <th translate> SOURCES</th>
+                    <th translate> ADAPTIVE</th>
+                    <th translate> DELIVERY</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="role in rolesVm.roles | multifilter:rolesVm.searchTerm:['name', 'resource_tag_name'] as filteredRoles"
+                    ng-click="rolesVm.selectRole(role.id)"
+                    ng-class="{'select-row': rolesVm.selectedRole.id === role.id}">
+                    <td> {{$index + 1}}</td>
+                    <td> {{role.name}}</td>
+                    <td> {{role.resource_tag_name}}</td>
+                    <td>
+                        <div icons-permissions="clusters" permissions-array="role.permissions"></div>
+                    </td>
+                    <td>
+                        <div icons-permissions="sources" permissions-array="role.permissions"></div>
+                    </td>
+                    <td>
+                        <div icons-permissions="adaptive_channels" permissions-array="role.permissions"></div>
+                    </td>
+                    <td>
+                        <div icons-permissions="delivery_channels" permissions-array="role.permissions"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center" ng-show="rolesVm.roles.length && !filteredRoles.length">
+                        {{'NO_RESULTS_FOUND'|translate}}...
+                    </td>
+                    <td colspan="6" class="text-center" ng-show="!rolesVm.roles.length && !filteredRoles.length">
+                        {{'NO_ROLES'|translate}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<hr class="info-msg" ng-show="!rolesVm.selectedRole">
+<h4 class="info-msg" ng-show="!rolesVm.selectedRole">{{'SELECT' | translate }} {{'ROLE' | translate }} {{'ABOVE' | translate }}</h4>
+<div class="row info-msg" style="min-height: 250px;" ng-show="!rolesVm.selectedRole"></div>
+
+<hr ng-show="rolesVm.selectedRole">
+
+<h4 ng-show="rolesVm.selectedRole">{{'ROLE' | translate }}: {{rolesVm.selectedRole.name}}</h4>
+
+<uib-tabset active="active" ng-if="rolesVm.selectedRole">
+    <uib-tab index="0">
+        <uib-tab-heading><i class='fa fa-list-ul pr-10'></i>
+            <span class="hidden-xs" translate>DETAILS</span>
+            <span class="visible-xs-inline" ng-show="active==0" translate>DETAILS</span>
+        </uib-tab-heading>
+        <div class="tab-pane fade in">
+            <!-- Permission Group start -->
+            <form class="form-horizontal form-condensed" name="editRoleForm" novalidate ng-submit="editRoleForm.$valid && rolesVm.updateRole(rolesVm.selectedRole.id)">
+                <div class="tableheader">
+                    <span class="title">&nbsp;</span>
+                    <div class="pull-right">
+                        <button class="btn btn-primary edit-alt"
+                                ng-show="!rolesVm.isEditModeEnabled"
+                                type="button"
+                                ng-click="rolesVm.enableEditMode()"
+                                translate>
+                            BTN_EDIT
+                        </button>
+                        <button class="btn btn-danger edit-alt"
+                                ng-show="!rolesVm.isEditModeEnabled"
+                                type="button"
+                                ng-click="rolesVm.removeRole(rolesVm.selectedRole.id)"
+                                translate>
+                            BTN_DELETE
+                        </button>
+                        <button class="btn btn-primary edit"
+                                ng-show="rolesVm.isEditModeEnabled"
+                                type="submit"
+                                translate>
+                            BTN_SAVE
+                        </button>
+                        <button class="btn edit"
+                                type="button"
+                                ng-show="rolesVm.isEditModeEnabled"
+                                ng-click="rolesVm.disableEditMode()"
+                                translate>
+                            BTN_CANCEL
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="form-group" ng-class="{'has-error': rolesVm.isEditModeEnabled && editRoleForm.$submitted && editRoleForm.name.$error.required}">
+                            <label class="col-sm-2 col-xs-4 control-label">{{'ROLE'|translate}} {{'NAME'|translate}}</label>
+                            <div class="col-xs-6">
+                                <p class="form-control-static edit-alt"
+                                   ng-show="!rolesVm.isEditModeEnabled">
+                                    {{rolesVm.selectedRole.name}}</p>
+                                <input type="text" class="form-control input-inline input-medium edit"
+                                       ng-show="rolesVm.isEditModeEnabled"
+                                       name="name"
+                                       ng-model="rolesVm.editingRole.name"
+                                       required>
+                                <div class="help-block" ng-show="editRoleForm.$submitted">
+                                    <span ng-show="rolesVm.isEditModeEnabled && editRoleForm.name.$error.required">
+                                        {{'ROLE'|translate}} {{'NAME'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-class="{'has-error': rolesVm.isEditModeEnabled && editRoleForm.$submitted && (editRoleForm.resTagNew.$error.required || editRoleForm.resTag.$error.required) }">
+                            <label class="col-sm-2 col-xs-4 control-label" translate>ACCESS_TAG</label>
+                            <div class="col-xs-6">
+                                <p class="form-control-static edit-alt"
+                                   ng-show="!rolesVm.isEditModeEnabled">
+                                    {{rolesVm.selectedRole.resource_tag_name}}</p>
+                                <div class="input-group col-md-7" ng-show="rolesVm.isEditModeEnabled">
+                                    <input ng-show="rolesVm.resourceTag.isNew"
+                                           name="resTagNew"
+                                           type="text"
+                                           class="form-control"
+                                           ng-model="rolesVm.resourceTag.name"
+                                           ng-required="rolesVm.resourceTag.isNew" />
+                                    <select class="form-control rounded-border-left"
+                                            name="resTag"
+                                            ng-show="!rolesVm.resourceTag.isNew"
+                                            ng-model="rolesVm.resourceTag.id"
+                                            ng-options="resourceTag.id as resourceTag.name for resourceTag in rolesVm.resourceTags"
+                                            ng-required="!rolesVm.resourceTag.isNew">
+                                    </select>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button" ng-click="rolesVm.resourceTag.isNew = !rolesVm.resourceTag.isNew">
+                                            <span ng-class="rolesVm.resourceTag.isNew?'glyphicon glyphicon-search':'fa fa-pencil'"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div class="help-block" ng-show="editRoleForm.$submitted">
+                                    <span ng-show="rolesVm.isEditModeEnabled && editRoleForm.resTag.$error.required || editRoleForm.resTagNew.$error.required">
+                                        {{'ACCESS_TAG'|translate}} {{'CANNOT_BE_EMPTY'| translate}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-4 control-label" translate>RESOURCES</label>
+                            <div class="col-sm-10 col-xs-8" ng-show="!rolesVm.isEditModeEnabled" icons-permissions="clusters"
+                                 permissions-array="rolesVm.selectedRole.permissions" class='form-control-static'></div>
+                            <div class="col-sm-10 col-xs-12" ng-if="rolesVm.isEditModeEnabled" icons-permissions="clusters"
+                                 edit-mode="true"
+                                 permissions-array="rolesVm.editingRole.permissions"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-4 control-label" translate>SOURCES</label>
+                            <div class="col-sm-10 col-xs-8" ng-show="!rolesVm.isEditModeEnabled" icons-permissions="sources"
+                                 permissions-array="rolesVm.selectedRole.permissions" class='form-control-static'></div>
+                            <div class="col-sm-10 col-xs-12" ng-if="rolesVm.isEditModeEnabled" icons-permissions="sources"
+                                 edit-mode="true"
+                                 permissions-array="rolesVm.editingRole.permissions"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-4 control-label" translate>ADAPTIVE</label>
+                            <div class="col-sm-10 col-xs-8" ng-show="!rolesVm.isEditModeEnabled"
+                                 icons-permissions="adaptive_channels"
+                                 permissions-array="rolesVm.selectedRole.permissions" class='form-control-static'></div>
+                            <div class="col-sm-10 col-xs-12" ng-if="rolesVm.isEditModeEnabled" icons-permissions="adaptive_channels"
+                                 edit-mode="true"
+                                 permissions-array="rolesVm.editingRole.permissions"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-4 control-label" translate>DELIVERY</label>
+                            <div class="col-sm-10 col-xs-8" ng-show="!rolesVm.isEditModeEnabled"
+                                 icons-permissions="delivery_channels"
+                                 permissions-array="rolesVm.selectedRole.permissions" class='form-control-static'></div>
+                            <div class="col-sm-10 col-xs-12" ng-if="rolesVm.isEditModeEnabled" icons-permissions="delivery_channels"
+                                 edit-mode="true"
+                                 permissions-array="rolesVm.editingRole.permissions"></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </uib-tab>
+    <uib-tab index="1">
+        <uib-tab-heading><i class="fa fa-users pr-10"></i>
+            <span class="hidden-xs">{{'MANAGE'|translate}} {{'GROUPS'|translate}}</span>
+            <span class="visible-xs-inline" ng-show="active==1">{{'MANAGE'|translate}} {{'GROUPS'|translate}}</span>
+        </uib-tab-heading>
+        <div class="tab-pane fade in">
+            <div class="row">
+                <!-- main start -->
+                <!-- ================ -->
+                <div class="main col-md-12">
+
+                    <div class="tableheader">
+                        <span class="title">&nbsp;</span>
+                        <button class="btn pull-right" style="margin-left:10px"
+                                ng-click="rolesVm.refreshRoleDetails(rolesVm.selectedRole.id)">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                        <button class="btn btn-primary pull-right"
+                                ng-click="rolesVm.openAssignGroupToRole()">
+                            <i class="fa fa-plus"></i> {{'ASSIGN'|translate}} {{'GROUP'|translate}}
+                        </button>
+                    </div>
+                    <div class="table-scrollable clearfix">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th> #</th>
+                                <th> {{'GROUP'|translate}} {{'NAME'|translate}}</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="group in rolesVm.selectedRole.groups">
+                                <td>{{$index + 1}}</td>
+                                <td>{{group.name}}</td>
+                                <td><a ng-click="rolesVm.removeGroupFromRole(rolesVm.selectedRole.id, group.id)"><i
+                                    class="fa fa-trash"></i> {{'REMOVE'|translate}}</a></td>
+                            </tr>
+                            <tr ng-show="rolesVm.selectedRole.groups.length === 0">
+                                <td colspan="4" class="text-center" translate>PH_GROUPS_NOT_ASSIGN</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+    <uib-tab index="2">
+        <uib-tab-heading><i class="fa fa-user pr-10"></i>
+            <span class="hidden-xs">{{'MANAGE'|translate}} {{'USERS'|translate}}</span>
+            <span class="visible-xs-inline" ng-show="active==2">{{'MANAGE'|translate}} {{'USERS'|translate}}</span>
+        </uib-tab-heading>
+        <div class="tab-pane fade in">
+            <div class="row">
+
+                <!-- main start -->
+                <!-- ================ -->
+                <div class="main col-md-12">
+
+                    <div class="tableheader">
+                        <span class="title">&nbsp;</span>
+                        <button class="btn pull-right" style="margin-left:10px"
+                                ng-click="rolesVm.refreshRoleDetails(rolesVm.selectedRole.id)">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                        <button class="btn btn-primary pull-right"
+                                ng-click="rolesVm.openAssignUserToRole()">
+                            <i class="fa fa-plus"></i> {{'ASSIGN'|translate}} {{'USER'|translate}}
+                        </button>
+                    </div>
+                    <div class="table-scrollable clearfix">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th> #</th>
+                                <th translate> USER</th>
+                                <th translate> EMAIL</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="user in rolesVm.selectedRole.users">
+                                <td>{{$index + 1}}</td>
+                                <td> {{user.name}}</td>
+                                <td> {{user.email}}</td>
+                                <td><a ng-click="rolesVm.removeUserFromRole(rolesVm.selectedRole.id, user.id)"><i
+                                    class="fa fa-trash"></i> {{'REMOVE'|translate}}</a></td>
+                            </tr>
+                            <tr ng-show="rolesVm.selectedRole.users.length === 0">
+                                <td colspan="4" class="text-center" translate>PH_USER_NOT_YET</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-tab>
+</uib-tabset>
